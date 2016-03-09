@@ -1,5 +1,5 @@
 # SansServer Maven Plugin
-A maven plugin used to configure and deploy your sans-server based applications.
+A maven plugin used to configure and deploy your SansServer-based applications.  To learn more about SansServer-based applications, visit:  https://github.com/bclemenzi/sans-server
 
 Features
 --------
