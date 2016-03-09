@@ -69,11 +69,11 @@ When executing your Maven build, make sure to include the "install" goal with yo
 
 Available Goals
 --------
-
  * deploy-lambda-gateway
-  * This goal is responsible for configuring your AWS S3 bucket with the following:
-   * Main bucket for hosting your SansServer-based application
-   * A deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  bucket_name/deploy
-   * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
-   * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::bucket_name/*"
-   * Creates a bucket policy statement that denies s3:GetObject on "arn:aws:s3:::bucket_name/deploy/*"
+  * Creates our S3 bucker for hosting your SansServer-based application
+  * A deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  bucket_name/deploy
+  * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
+  * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::bucket_name/*"
+  * Creates a bucket policy statement that denies s3:GetObject on "arn:aws:s3:::bucket_name/deploy/*"
+  
+  
