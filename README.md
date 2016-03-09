@@ -1,4 +1,4 @@
-# sans-server-plugin
+# SansServer Maven Plugin
 A maven plugin used to configure and deploy your sans-server based applications.
 
 Features
@@ -66,3 +66,14 @@ Usage
 The plugin is launched during the install phase of your build.  This is to ensure we have all the required artifacts to properly deploy your SansServer-based application.  
 
 When executing your Maven build, make sure to include the "install" goal with your list of build goals.
+
+Available Goals
+--------
+
+ * deploy-lambda-gateway
+  * This goal is responsible for configuring your AWS S3 bucket with the following:
+   * Main bucket for hosting your SansServer-based application
+   * A deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  bucket_name/deploy
+   * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
+   * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::bucket_name/*"
+   * Creates a bucket policy statement that denies s3:GetObject on "arn:aws:s3:::bucket_name/deploy/*"
