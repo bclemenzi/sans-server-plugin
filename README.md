@@ -12,34 +12,6 @@ Including the Maven plugin in your project by adding the following configuration
 
 ```xml
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-                	<artifactId>lifecycle-mapping</artifactId>
-                	<version>1.0.0</version>              
-                	<configuration>
-                  		<lifecycleMappingMetadata>
-                     		<pluginExecutions>
-                     			<pluginExecution>                     
-                         			<pluginExecutionFilter>
-                           				<groupId>com.nfbsoftware</groupId>
-                           				<artifactId>sans-server-plugin</artifactId>
-                           				<versionRange>[1.0,)</versionRange>                
-                         				<goals>
-                         	  				<goal>deploy-lambda-gateway</goal>
-                           				</goals>
-                         			</pluginExecutionFilter>
-                         			<action>
-                           				<ignore />
-                         			</action>
-                       			</pluginExecution>                     
-                     		</pluginExecutions>
-                  		</lifecycleMappingMetadata>                
-                	</configuration>
-            	</plugin>
-          	</plugins>
-      	</pluginManagement>  
 		<plugins>
 			.
 			. OTHER PLUGINS
