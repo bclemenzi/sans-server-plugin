@@ -62,10 +62,14 @@ Including the Maven plugin in your project by adding the following configuration
 ```
 
 Usage
------
+--------
 The plugin is launched during the install phase of your build.  This is to ensure we have all the required artifacts to properly deploy your SansServer-based application.  
 
 When executing your Maven build, make sure to include the "install" goal with your list of build goals.
+
+Requirements
+--------
+The sans-server-plugin expects there to be project.properties file found under your project's ${project.basedir} folder.
 
 Available Goals
 --------
