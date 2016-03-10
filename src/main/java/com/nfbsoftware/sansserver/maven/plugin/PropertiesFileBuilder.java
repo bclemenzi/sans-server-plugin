@@ -1,4 +1,4 @@
-package com.nfbsoftware.sans_server.plugin;
+package com.nfbsoftware.sansserver.maven.plugin;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -53,13 +53,6 @@ public class PropertiesFileBuilder extends AbstractMojo
             // Generate the project properties file
             StringBuffer defaultXml = new StringBuffer();
             
-            defaultXml.append("aws.region=us-east-1");
-            defaultXml.append("aws.accessKey=AKIAJMMZ72O6FIH3SCEQ");
-            defaultXml.append("aws.secretKey=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");
-            defaultXml.append("aws.cognito.identityPoolId=us-east-1:62b6420c-927c-486e-b9fc-b7e9a363f353");
-            defaultXml.append("aws.cognito.providerName=nfbsw.login.services");
-            defaultXml.append("aws.dynamodb.tableNamePrefix=BCLEMENZI");
-            defaultXml.append("aws.s3.bucketName=bclemenzi.nfbsoftware.com");
 
             w.write(defaultXml.toString());
         }

@@ -1,4 +1,4 @@
-package com.nfbsoftware.sans_server.plugin;
+package com.nfbsoftware.sansserver.maven.plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,8 +9,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
-import com.nfbsoftware.sans_server.amazon.AmazonS3Impl;
-import com.nfbsoftware.sans_server.util.Entity;
+import com.nfbsoftware.sansserver.maven.amazon.AmazonS3Impl;
+import com.nfbsoftware.sansserver.sdk.util.Entity;
 
 /**
  * Goal which configures and deploys our Lambda functions with API Gateway endpoints.

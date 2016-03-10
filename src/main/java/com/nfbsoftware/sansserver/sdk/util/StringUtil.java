@@ -1,4 +1,4 @@
-package com.nfbsoftware.sans_server.util;
+package com.nfbsoftware.sansserver.sdk.util;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

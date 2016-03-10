@@ -1,12 +1,12 @@
-# SansServer Maven Plugin
-A maven plugin used to configure and deploy your SansServer-based applications.  To learn more about SansServer-based applications, visit:  https://github.com/bclemenzi/sans-server
+# SansServer Plugin
+The SansServer Plugin serves two purposed, one as a development SDK and the other as a Maven plugin to build, provision, and deploy SansServer-based applications.  To learn more about SansServer-based applications, visit:  https://github.com/bclemenzi/sans-server
 
 Features
 --------
 
   * Published on Maven Central Repository
   
-Getting started
+Getting started with the Maven Plugin
 ---------------
 Including the Maven plugin in your project by adding the following configuration to your `pom.xml`:
 
@@ -32,6 +32,22 @@ Including the Maven plugin in your project by adding the following configuration
 		</plugins>
 	</build>
 ```
+
+Getting started with the SDK
+---------------
+```xml
+	<dependencies>
+			.
+			. OTHER DEPENDENCIES
+			.
+		<dependency>
+			<groupId>com.nfbsoftware</groupId>
+			<artifactId>sans-server-plugin</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+```
+
 
 Usage
 --------
