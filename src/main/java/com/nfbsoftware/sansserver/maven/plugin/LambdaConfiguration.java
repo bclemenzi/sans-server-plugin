@@ -167,7 +167,7 @@ public class LambdaConfiguration extends AbstractMojo
                 
                 if(awsLambdaAnnotation != null)
                 {
-                    deployLambdaFunction(classFileName, awsLambdaAnnotation.name(), awsLambdaAnnotation.desc(), awsLambdaAnnotation.handlerMethod());
+                    deployLambdaFunction(classFileName, awsLambdaAnnotation.name(), awsLambdaAnnotation.desc(), awsLambdaAnnotation.handlerMethod(), awsLambdaAnnotation.memorySize(), awsLambdaAnnotation.timeout());
                 }
             }
             /*
@@ -178,7 +178,7 @@ public class LambdaConfiguration extends AbstractMojo
                 if(awsLambdaWithGatewayAnnotation != null)
                 {
                     // Deploy out Lambda function
-                    deployLambdaFunction(awsLambdaWithGatewayAnnotation.name(), awsLambdaWithGatewayAnnotation.desc(), awsLambdaWithGatewayAnnotation.handlerMethod());
+                    deployLambdaFunction(classFileName, awsLambdaAnnotation.name(), awsLambdaAnnotation.desc(), awsLambdaAnnotation.handlerMethod(), awsLambdaAnnotation.memorySize(), awsLambdaAnnotation.timeout());
                     
                     // Make sure we have our API Gateway to link our Lambda functions to
                     if(!m_hasGateway)
@@ -230,12 +230,10 @@ public class LambdaConfiguration extends AbstractMojo
      * @param awsLambdaAnnotation
      * @throws Exception
      */
-    private void deployLambdaFunction(String classFileName, String name, String description, String handlerMethod) throws Exception
+    private void deployLambdaFunction(String classFileName, String name, String description, String handlerMethod, String memorySize, String timeout) throws Exception
     {
         String environmentePrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         String lambdaRoleArn = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_LAMBDA_ROLE_ARN));
-        String lambdaTimeout = StringUtil.replaceIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_LAMBDA_TIMEOUT), "60");
-        String lambdaMemory = StringUtil.replaceIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_LAMBDA_MEMORY), "128");
         
         // Create a generated function name so that we can isolate multiple deployments
         String generatedlambdaName = StringUtil.replaceSubstr(environmentePrefix + "_" + name, " ", "");
@@ -251,8 +249,8 @@ public class LambdaConfiguration extends AbstractMojo
             updateFunctionConfigurationRequest.setRole(lambdaRoleArn);
             updateFunctionConfigurationRequest.setFunctionName(generatedlambdaName);
             updateFunctionConfigurationRequest.setHandler(generatedHandlerName);
-            updateFunctionConfigurationRequest.setTimeout(new Integer(lambdaTimeout));
-            updateFunctionConfigurationRequest.setMemorySize(new Integer(lambdaMemory));
+            updateFunctionConfigurationRequest.setTimeout(new Integer(timeout));
+            updateFunctionConfigurationRequest.setMemorySize(new Integer(memorySize));
             
             // Lets look if we have changed the configuration since our last update
             if(m_awsLambdaClient.hasFunctionConfigChanged(getFunctionResult, updateFunctionConfigurationRequest))
@@ -278,8 +276,8 @@ public class LambdaConfiguration extends AbstractMojo
             createFunctionRequest.setRole(lambdaRoleArn);
             createFunctionRequest.setHandler(generatedHandlerName);
             createFunctionRequest.setRuntime(com.amazonaws.services.lambda.model.Runtime.Java8);
-            createFunctionRequest.setTimeout(new Integer(lambdaTimeout));
-            createFunctionRequest.setMemorySize(new Integer(lambdaMemory));
+            createFunctionRequest.setTimeout(new Integer(timeout));
+            createFunctionRequest.setMemorySize(new Integer(memorySize));
             
             // Create our function
             m_awsLambdaClient.createFunction(deploymentJarFileName, createFunctionRequest);

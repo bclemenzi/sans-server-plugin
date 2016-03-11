@@ -33,6 +33,8 @@ public @interface AwsLambdaWithGateway
     String name();
     String desc();
     String handlerMethod();
+    String memorySize() default "128";
+    String timeout() default "60";
     String resourceName();
 
     MethodTypes method() default MethodTypes.POST;

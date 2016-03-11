@@ -23,9 +23,6 @@ public class Entity
         public static final String AWS_COGNITO_PROVIDER_NAME            = "aws.cognito.providerName";
         
         public static final String AWS_LAMBDA_ROLE_ARN                  = "aws.lambda.roleArn";
-        public static final String AWS_LAMBDA_MEMORY                    = "aws.lambda.memory";
-        public static final String AWS_LAMBDA_TIMEOUT                   = "aws.lambda.timeout";
-        public static final String AWS_LAMBDA_VPC                       = "aws.lambda.vpc";
         
         public static final String AWS_APIGATEWAY_DEVELOPMENT_STAGE     = "aws.apigateway.deploymentStage";
         public static final String AWS_APIGATEWAY_DEVELOPMENT_DESC      = "aws.apigateway.deploymentDescription";

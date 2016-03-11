@@ -28,9 +28,11 @@ Available Annotations in the SDK
  * @AWSLambda
   * Used to identify class files used for Java-based Lambda functions
   * @AwsLambda(name="ViewUser", desc="Function to view a given user record", handlerMethod="handleRequest")
+  * @AwsLambda(name="ViewUser", desc="Function to view a given user record", handlerMethod="handleRequest", memorySize="512", timeout="60")
   
  * @AwsLambdaWithGateway - COMING SOON
   * Used to identify class files used for Java-based Lambda functions with an API Gateway
+  * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", memorySize="512", timeout="60", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   
 Getting started with the Maven Plugin
@@ -92,10 +94,6 @@ The sans-server-plugin expects there to be build.properties file found under you
  * aws.lambda.roleArn
   * The ARN created for executing Lambda functions
   * A recommended Role Policy for a new IAM Role can be found at /IAM/Roles/Lambda-Basic-Execution-Policy.json
- * aws.lambda.memory
-  * Your function is allocated CPU and memory proportional to the memory configured.  This value can range from 128 to 1536
- * aws.lambda.timeout
-  * The number of seconds the Lambda functions may run before being killed by the system.  This value can range from 1 to 60
  * aws.s3.bucketName
   * The name of your projects S3 bucket.  If this bucket doesn't exist, the build process will create it for you.
   * The S3 bucket will be used for deployment artifacts and static web files used in the UI side of the SansServer framework 

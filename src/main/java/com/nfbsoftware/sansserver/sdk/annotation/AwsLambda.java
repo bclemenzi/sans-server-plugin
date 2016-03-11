@@ -17,4 +17,6 @@ public @interface AwsLambda
     String name();
     String desc();
     String handlerMethod();
+    String memorySize() default "128";
+    String timeout() default "60";
 }
