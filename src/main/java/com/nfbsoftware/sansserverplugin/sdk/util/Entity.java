@@ -31,5 +31,7 @@ public class Entity
         
         public static final String AWS_S3_BUCKET_NAME                   = "aws.s3.bucketName";
         public static final String AWS_S3_DEPLOYMENT_FOLDER             = "aws.s3.deploymentFolder";
+        
+        public static final String AWS_SES_REPLY_EMAIL_ADDRESS          = "aws.ses.replyEmailAddress";
     }
 }

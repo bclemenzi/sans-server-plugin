@@ -6,8 +6,13 @@ Features
 
   * Custom Java Annotations for the installation and configuration of AWS artifacts
    * Lambda Functions (Java8)
-   * AWS Gateway APIs
+   * AWS Gateway APIs used for RESTful access to your Lambda functions
    * AWS S3 Storage
+  * SansServer SDK includes a number of Java wrapper classes to make working with the AWS SDK easier.
+   * AmazonS3Manager
+   * AmazonSESManager
+   * AmazonCognitoManager
+   * AbstractDynamoDbDao
   * Published on Maven Central Repository
   
 Getting started with the SDK
@@ -21,7 +26,7 @@ To use the features provided by
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
 	</dependencies>
 ```
@@ -51,7 +56,7 @@ Including the Maven plugin in your project by adding the following configuration
 			<plugin>
                 <groupId>com.nfbsoftware</groupId>
 				<artifactId>sans-server-plugin</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.1</version>
             	<executions>
                 	<execution>
                 		<id>first-execution</id>
@@ -106,6 +111,8 @@ The sans-server-plugin expects there to be build.properties file found under you
   * The name of the S3 bucket folder used to upload the Lambda deployment JAR
  * aws.s3.staticResourcesFolder
   * The name of the S3 bucket folder used to host static web resources for our web application.
+ * aws.ses.replyEmailAddress
+  * The email address to use as your "from" address when sending email through the service
 
 Along with the required build.properties file.  The sans-server-plugin assumes that your Maven project follows the following folder structure at a minimum:
 

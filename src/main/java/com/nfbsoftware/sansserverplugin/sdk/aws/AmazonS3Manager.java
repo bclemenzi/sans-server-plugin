@@ -9,8 +9,10 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -36,7 +38,8 @@ import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
  */
 public class AmazonS3Manager
 {
-    private Log m_logger;
+    protected Log m_logger;
+    
     private String m_regionName;
     private String m_bucketName;
     private AmazonS3 m_amazonS3Client;
@@ -47,10 +50,10 @@ public class AmazonS3Manager
      * @param logger
      * @param properties
      */
-    public AmazonS3Manager(Log logger, Properties properties)
+    public AmazonS3Manager(Properties properties)
     {
-        // Save our logger
-        m_logger = logger;
+        m_logger = LogFactory.getLog(this.getClass());
+        
         m_properties = properties;
         
         String regionName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION));
