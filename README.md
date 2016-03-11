@@ -89,7 +89,9 @@ The sans-server-plugin expects there to be build.properties file found under you
  * aws.region
   * This is the String value of Amazon's region that your deployment should be provisioned
  * aws.accessKey
+  * Your user's AWS access key.
  * aws.secretKey
+  * Your user's AWS secret access key.
  * aws.cognito.identityPoolId
   * The pool id for AWS Cognito instance
   * Amazon Cognito allows you to store user data for your mobile apps, such as user preferences, mobile login, and game state, in the Amazon Cognito sync store. You can then sync this data across a user’s devices to help make their experience consistent across their devices. Amazon Cognito can automatically send a push notification to a user’s devices when data in the sync store changes.
