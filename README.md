@@ -4,7 +4,33 @@ The SansServer Plugin serves two purposed, one as a development SDK and the othe
 Features
 --------
 
+  * Custom Java Annotations for AWS configurations
   * Published on Maven Central Repository
+  
+Getting started with the SDK
+---------------
+To use the features provided by
+```xml
+	<dependencies>
+			.
+			. OTHER DEPENDENCIES
+			.
+		<dependency>
+			<groupId>com.nfbsoftware</groupId>
+			<artifactId>sans-server-plugin</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+```
+
+Available Annotations in the SDK
+---------------
+ * @AWSLambda
+  * Used to identify class files used for Java-based Lambda functions
+  * @AwsLambda(name="View User", desc="Function to view a given user record", handlerMethod="handleRequest")
+ * @AwsLambdaWithGateway
+  * Used to identify class files used for Java-based Lambda functions with an API Gateway
+  * @AwsLambdaWithGateway(name="Authenticate User", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", resourcePath="/login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   
 Getting started with the Maven Plugin
 ---------------
@@ -24,7 +50,7 @@ Including the Maven plugin in your project by adding the following configuration
                     <execution>
                         <phase>install</phase>
                         <goals>
-                        	<goal>deploy-lambda-gateway</goal>
+                        	<goal>deploy-lambda</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -33,33 +59,19 @@ Including the Maven plugin in your project by adding the following configuration
 	</build>
 ```
 
-Getting started with the SDK
----------------
-```xml
-	<dependencies>
-			.
-			. OTHER DEPENDENCIES
-			.
-		<dependency>
-			<groupId>com.nfbsoftware</groupId>
-			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-	</dependencies>
-```
-
-
-Usage
+Maven Plugin Usage
 --------
 The plugin is launched during the install phase of your build.  This is to ensure we have all the required artifacts to properly deploy your SansServer-based application.  
 
 When executing your Maven build, make sure to include the "install" goal with your list of build goals.
 
-Requirements
+Maven Plugin Requirements
 --------
-The sans-server-plugin expects there to be project.properties file found under your project's ${project.basedir} folder.
+The sans-server-plugin expects there to be build.properties file found under your project's ${project.basedir} folder.  The following chart will explain each of the file's properties:
 
-Available Goals
+TODO - Add Chart
+
+Available Maven Goals
 --------
  * deploy-lambda-gateway
   * Creates our S3 bucker for hosting your SansServer-based application

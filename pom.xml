@@ -8,7 +8,7 @@
   	<packaging>maven-plugin</packaging>
   	<version>1.0.0</version>
   	
-  	<name>SansServer Maven Plugin</name>
+  	<name>SansServer Plugin</name>
   	<url>http://maven.apache.org</url>
   
     <build>
@@ -41,6 +41,21 @@
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk</artifactId>
 			<version>1.10.52</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-lambda-java-core</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-lambda-java-events</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>

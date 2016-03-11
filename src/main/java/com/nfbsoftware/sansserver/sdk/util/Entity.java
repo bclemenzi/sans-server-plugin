@@ -13,24 +13,26 @@ public class Entity
      */
     public class FrameworkProperties
     {
-        public static final String AWS_REGION                                           = "aws.region";
-        public static final String AWS_ACCESS_KEY                                       = "aws.accessKey";
-        public static final String AWS_SECRET_KEY                                       = "aws.secretKey";
+        public static final String ENVIRONEMNT_PREFIX                   = "environment.namePrefix";
         
-        public static final String AWS_COGNITO_IDENTITY_POOL_ID                         = "aws.cognito.identityPoolId";
-        public static final String AWS_CONGITO_PROVIDER_NAME                            = "aws.cognito.providerName";
+        public static final String AWS_REGION                           = "aws.region";
+        public static final String AWS_ACCESS_KEY                       = "aws.accessKey";
+        public static final String AWS_SECRET_KEY                       = "aws.secretKey";
         
-        public static final String AWS_LAMBDA_FUNCTION_NAME_PREFIX                      = "aws.lambda.functionNamePrefix";
-        public static final String AWS_LAMBDA_FUNCTION_MEMORY                           = "aws.lambda.functionMemory";
-        public static final String AWS_LAMBDA_FUNCTION_TIMEOUT                          = "aws.lambda.functionTimeout";
-        public static final String AWS_LAMBDA_FUNCTION_VPC                              = "aws.lambda.functionVPC";
+        public static final String AWS_COGNITO_IDENTITY_POOL_ID         = "aws.cognito.identityPoolId";
+        public static final String AWS_CONGITO_PROVIDER_NAME            = "aws.cognito.providerName";
         
-        public static final String AWS_APIGATEWAY_DEVELOPMENT_STAGE                     = "aws.apigateway.deploymentStage";
-        public static final String AWS_APIGATEWAY_DEVELOPMENT_DESC                      = "aws.apigateway.deploymentDescription";
+        public static final String AWS_LAMBDA_ROLE_ARN                  = "aws.lambda.roleArn";
+        public static final String AWS_LAMBDA_MEMORY                    = "aws.lambda.memory";
+        public static final String AWS_LAMBDA_TIMEOUT                   = "aws.lambda.timeout";
+        public static final String AWS_LAMBDA_VPC                       = "aws.lambda.vpc";
         
-        public static final String AWS_DYNAMODB_TABLE_NAME_PREFIX                       = "aws.dynamodb.tableNamePrefix";
+        public static final String AWS_APIGATEWAY_DEVELOPMENT_STAGE     = "aws.apigateway.deploymentStage";
+        public static final String AWS_APIGATEWAY_DEVELOPMENT_DESC      = "aws.apigateway.deploymentDescription";
         
-        public static final String AWS_S3_BUCKET_NAME                                   = "aws.s3.bucketName";
-        public static final String AWS_S3_DEPLOYMENT_FOLDER                             = "aws.s3.deploymentFolder";
+        public static final String AWS_DYNAMODB_TABLE_NAME_PREFIX       = "aws.dynamodb.tableNamePrefix";
+        
+        public static final String AWS_S3_BUCKET_NAME                   = "aws.s3.bucketName";
+        public static final String AWS_S3_DEPLOYMENT_FOLDER             = "aws.s3.deploymentFolder";
     }
 }

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
@@ -29,24 +30,33 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.SetBucketPolicyRequest;
+import com.nfbsoftware.sansserver.sdk.util.Entity;
 import com.nfbsoftware.sansserver.sdk.util.StringUtil;
 
 /**
  * 
  * @author brendanclemenzi
  */
-public class AmazonS3Impl
+public class AmazonS3Utility
 {
     private Log m_logger;
     private String m_regionName;
     private String m_bucketName;
     private String m_deploymentFolder;
     private AmazonS3 m_amazonS3Client;
+    private Properties m_properties;
 
-    public AmazonS3Impl(Log logger, String accessKey, String secretKey, String regionName, String deploymentFolder, String bucketName)
+    public AmazonS3Utility(Log logger, Properties properties)
     {
         // Save our logger
         m_logger = logger;
+        m_properties = properties;
+        
+        String regionName = m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION);
+        String accessKey = m_properties.getProperty(Entity.FrameworkProperties.AWS_ACCESS_KEY);
+        String secretKey = m_properties.getProperty(Entity.FrameworkProperties.AWS_SECRET_KEY);
+        String bucketName = m_properties.getProperty(Entity.FrameworkProperties.AWS_S3_BUCKET_NAME);
+        String deploymentFolder = m_properties.getProperty(Entity.FrameworkProperties.AWS_S3_DEPLOYMENT_FOLDER);
 
         // Save out bucket name for use later
         m_regionName = regionName;

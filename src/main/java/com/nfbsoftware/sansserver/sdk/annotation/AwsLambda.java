@@ -1,17 +1,20 @@
 package com.nfbsoftware.sansserver.sdk.annotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Annotation class to allow use to configure Java-based Lambda functions
  * 
  * @author Brendan Clemenzi
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface AwsLambda 
 {
+    String name();
     String desc();
-    String apiResourceName();
-    String apiResourcePath();
-    String apiMethod();
-    String apiSecurity();
-    boolean enableCORS();
+    String handlerMethod();
 }
-
