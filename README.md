@@ -131,13 +131,13 @@ Available Maven Goals
   
  * deploy-lambda-gateway
   * Creates our S3 bucket for hosting your SansServer-based application
-  * Creates a deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  "deploy"
-  * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
-  * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::bucket_name/*"
+  * Creates a deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  "deploy".  Deployment JARs are removed from this directory once the functions have been created/updated in AWS.
+  * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::<bucket_name>/*"
   
  * deploy-webapp :: COMING SOON
   * Creates our S3 bucket for hosting your SansServer-based application
   * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
+  * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::<bucket_name>/*"
   * Uploads the contents of the project's src/main/webapp folder to your S3 bucket.
   
   
