@@ -1,5 +1,5 @@
-# SansServer Plugin
-The SansServer Plugin serves two purposes, one as a development SDK and the other as a Maven plugin to build, provision, and deploy SansServer-based applications.  To learn more about SansServer-based applications, visit:  https://github.com/bclemenzi/sans-server
+# SansServer-Plugin
+The SansServer-Plugin serves two purposes, one as a development SDK and the other as a Maven plugin to build, provision, and deploy SansServer-based applications.  To learn more about SansServer-based applications, visit:  https://github.com/bclemenzi/sans-server
 
 Features
 --------
@@ -84,9 +84,25 @@ The plugin is launched during the install phase of your build.  This is to ensur
 
 When executing your Maven build, make sure to include the "install" goal with your list of build goals.
 
-Maven Plugin Requirements
+Available Maven Goals
 --------
-The sans-server-plugin expects there to be build.properties file found under your project's ${project.basedir} folder.  This project includes a template file (build.properties.template) as an example of a properties file.  The following outline will explain each of the file's properties:
+ * build-properties
+  * Converts the required build.properties into our runtime properties file used by our Lambda functions
+  
+ * deploy-lambda-gateway
+  * Creates our S3 bucket for hosting your SansServer-based application
+  * Creates a deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  "deploy".  Deployment JARs are removed from this directory once the functions have been created/updated in AWS.
+  * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::<bucket_name>/*"
+  
+ * deploy-webapp :: COMING SOON
+  * Creates our S3 bucket for hosting your SansServer-based application
+  * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
+  * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::<bucket_name>/*"
+  * Uploads the contents of the project's src/main/webapp folder to your S3 bucket.
+
+SansServer-Plugin Requirements
+--------
+The SansServer-Plugin (SDK/Maven) expects there to be build.properties file found under your project's ${project.basedir} folder.  This project includes a template file (build.properties.template) as an example of a properties file.  The following outline will explain each of the file's properties:
 
  * environment.namePrefix
   * The environment.namePrefix value is used to isolate multiple deployments.  For example, a production .vs. development deployment.
@@ -133,20 +149,6 @@ Along with the required build.properties file.  The sans-server-plugin assumes t
 	---- pom.xml
 ```
 
-Available Maven Goals
---------
- * build-properties
-  * Converts the required build.properties into our runtime properties file used by our Lambda functions
-  
- * deploy-lambda-gateway
-  * Creates our S3 bucket for hosting your SansServer-based application
-  * Creates a deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  "deploy".  Deployment JARs are removed from this directory once the functions have been created/updated in AWS.
-  * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::<bucket_name>/*"
-  
- * deploy-webapp :: COMING SOON
-  * Creates our S3 bucket for hosting your SansServer-based application
-  * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
-  * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::<bucket_name>/*"
-  * Uploads the contents of the project's src/main/webapp folder to your S3 bucket.
+
   
   
