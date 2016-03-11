@@ -75,17 +75,65 @@ When executing your Maven build, make sure to include the "install" goal with yo
 
 Maven Plugin Requirements
 --------
-The sans-server-plugin expects there to be build.properties file found under your project's ${project.basedir} folder.  The following chart will explain each of the file's properties:
+The sans-server-plugin expects there to be build.properties file found under your project's ${project.basedir} folder.  This project includes a template file (build.properties.template) as an example of a properties file.  The following outline will explain each of the file's properties:
 
-TODO - Add Chart
+ * environment.namePrefix
+  * The environment.namePrefix value is used to isolate multiple deployments.  For example, a production .vs. development deployment.
+  * I recommend creating an environment name prefix to isolate multiple environments QA, PRODUCTION, or developer's name to isolate this bucket in AWS
+ * aws.region
+  * This is the String value of Amazon's region that your deployment should be provisioned
+ * aws.accessKey
+ * aws.secretKey
+ * aws.cognito.identityPoolId
+  * The pool id for AWS Cognito instance
+  * Amazon Cognito allows you to store user data for your mobile apps, such as user preferences, mobile login, and game state, in the Amazon Cognito sync store. You can then sync this data across a user’s devices to help make their experience consistent across their devices. Amazon Cognito can automatically send a push notification to a user’s devices when data in the sync store changes.
+ * aws.cognito.providerName
+ * aws.lambda.roleArn
+  * The ARN created for executing Lambda functions
+  * A recommended Role Policy for a new IAM Role can be found at /IAM/Roles/Lambda-Basic-Execution-Policy.json
+ * aws.lambda.memory
+  * Your function is allocated CPU and memory proportional to the memory configured.  This value can range from 128 to 1536
+ * aws.lambda.timeout
+  * The number of seconds the Lambda functions may run before being killed by the system.  This value can range from 1 to 60
+ * aws.s3.bucketName
+  * The name of your projects S3 bucket.  If this bucket doesn't exist, the build process will create it for you.
+  * The S3 bucket will be used for deployment artifacts and static web files used in the UI side of the SansServer framework 
+ * aws.s3.deploymentFolder
+  * The name of the S3 bucket folder used to upload the Lambda deployment JAR
+ * aws.s3.staticResourcesFolder
+  * The name of the S3 bucket folder used to host static web resources for our web application.
+
+Along with the required build.properties file.  The sans-server-plugin assumes that your Maven project follows the following folder structure at a minimum:
+
+```xml
+	-- project folder (name of your choosing)
+	---- src
+	------ main
+	-------- java
+	-------- resources
+	-------- webapp
+	---------- static
+	---------- index.html
+	---------- error.html
+	------ test
+	-------- java
+	-------- resources
+	---- build.properties
+	---- pom.xml
+```
 
 Available Maven Goals
 --------
+ * build-properties
+  * Converts the required build.properties into our runtime properties file used by our Lambda functions
+  
  * deploy-lambda-gateway
   * Creates our S3 bucker for hosting your SansServer-based application
   * A deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  bucket_name/deploy
   * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
   * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::bucket_name/*"
-  * Creates a bucket policy statement that denies s3:GetObject on "arn:aws:s3:::bucket_name/deploy/*"
+  
+ * deploy-webapp - COMING SOON
+  * Uploads the contents of the project's src/main/webapp folder to your S3 bucket.
   
   
