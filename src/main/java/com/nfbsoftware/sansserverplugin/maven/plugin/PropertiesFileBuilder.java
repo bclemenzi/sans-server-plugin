@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.maven.plugin;
+package com.nfbsoftware.sansserverplugin.maven.plugin;
 
 import java.io.File;
 import java.io.IOException;

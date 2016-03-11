@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.maven.amazon;
+package com.nfbsoftware.sansserverplugin.maven.amazon;
 
 import java.util.List;
 import java.util.Properties;
@@ -28,7 +28,7 @@ import com.amazonaws.services.apigateway.model.UpdateResourceRequest;
 import com.amazonaws.services.apigateway.model.UpdateResourceResult;
 import com.amazonaws.services.apigateway.model.UpdateRestApiRequest;
 import com.amazonaws.services.apigateway.model.UpdateRestApiResult;
-import com.nfbsoftware.sansserver.sdk.util.Entity;
+import com.nfbsoftware.sansserverplugin.sdk.util.Entity;
 
 /**
  * 

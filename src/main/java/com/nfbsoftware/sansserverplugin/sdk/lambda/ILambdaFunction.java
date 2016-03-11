@@ -1,6 +1,6 @@
-package com.nfbsoftware.sansserver.sdk.lambda;
+package com.nfbsoftware.sansserverplugin.sdk.lambda;
 
-import com.nfbsoftware.sansserver.sdk.lambda.model.HandlerResponse;
+import com.nfbsoftware.sansserverplugin.sdk.lambda.model.HandlerResponse;
 
 /**
  * The ILambdaFunction interface...

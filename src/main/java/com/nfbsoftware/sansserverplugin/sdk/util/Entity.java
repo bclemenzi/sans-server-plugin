@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.sdk.util;
+package com.nfbsoftware.sansserverplugin.sdk.util;
 
 /**
  * The Entity class is used to store static values of our various objects

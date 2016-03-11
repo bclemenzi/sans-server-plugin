@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.sdk.aws;
+package com.nfbsoftware.sansserverplugin.sdk.aws;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -27,8 +27,8 @@ import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import com.nfbsoftware.sansserver.sdk.util.Entity;
-import com.nfbsoftware.sansserver.sdk.util.StringUtil;
+import com.nfbsoftware.sansserverplugin.sdk.util.Entity;
+import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.sdk.junit;
+package com.nfbsoftware.sansserverplugin.sdk.junit;
 
 import com.amazonaws.services.lambda.runtime.ClientContext;
 import com.amazonaws.services.lambda.runtime.CognitoIdentity;

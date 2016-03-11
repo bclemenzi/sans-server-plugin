@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.sdk.lambda.model;
+package com.nfbsoftware.sansserverplugin.sdk.lambda.model;
 
 import java.util.HashMap;
 import java.util.Map;

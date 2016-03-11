@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.maven.amazon;
+package com.nfbsoftware.sansserverplugin.maven.amazon;
 
 import java.util.Properties;
 
@@ -19,7 +19,7 @@ import com.amazonaws.services.lambda.model.UpdateFunctionCodeRequest;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionConfigurationRequest;
 import com.amazonaws.services.lambda.model.UpdateFunctionConfigurationResult;
-import com.nfbsoftware.sansserver.sdk.util.Entity;
+import com.nfbsoftware.sansserverplugin.sdk.util.Entity;
 
 /**
  * 

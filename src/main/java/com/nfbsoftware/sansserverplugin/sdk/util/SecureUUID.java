@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.sdk.util;
+package com.nfbsoftware.sansserverplugin.sdk.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

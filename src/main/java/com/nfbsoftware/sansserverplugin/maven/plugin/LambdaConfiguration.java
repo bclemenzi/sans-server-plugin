@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.maven.plugin;
+package com.nfbsoftware.sansserverplugin.maven.plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,12 +24,12 @@ import com.amazonaws.services.apigateway.model.GetRestApiResult;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionConfigurationRequest;
-import com.nfbsoftware.sansserver.maven.amazon.AmazonGatewayUtility;
-import com.nfbsoftware.sansserver.maven.amazon.AmazonLambdaUtility;
-import com.nfbsoftware.sansserver.maven.amazon.AmazonS3Utility;
-import com.nfbsoftware.sansserver.sdk.annotation.AwsLambda;
-import com.nfbsoftware.sansserver.sdk.util.Entity;
-import com.nfbsoftware.sansserver.sdk.util.StringUtil;
+import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonGatewayUtility;
+import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonLambdaUtility;
+import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonS3Utility;
+import com.nfbsoftware.sansserverplugin.sdk.annotation.AwsLambda;
+import com.nfbsoftware.sansserverplugin.sdk.util.Entity;
+import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
 
 /**
  * Goal which configures and deploys our Lambda functions with API Gateway endpoints.

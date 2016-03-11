@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.sdk.lambda;
+package com.nfbsoftware.sansserverplugin.sdk.lambda;
 
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
-import com.nfbsoftware.sansserver.sdk.lambda.model.HandlerResponse;
+import com.nfbsoftware.sansserverplugin.sdk.lambda.model.HandlerResponse;
 
 /**
  * The BaseHandler should be used as a base function for Lambda.  It will create a baseline set of objects needed by all our functions.

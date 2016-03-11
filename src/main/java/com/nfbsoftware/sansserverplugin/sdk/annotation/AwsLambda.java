@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.sdk.annotation;
+package com.nfbsoftware.sansserverplugin.sdk.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

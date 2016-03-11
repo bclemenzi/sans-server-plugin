@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.sdk.dynamodb;
+package com.nfbsoftware.sansserverplugin.sdk.dynamodb;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +20,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.nfbsoftware.sansserver.sdk.util.DynamoDbUtility;
-import com.nfbsoftware.sansserver.sdk.util.Entity;
+import com.nfbsoftware.sansserverplugin.sdk.util.DynamoDbUtility;
+import com.nfbsoftware.sansserverplugin.sdk.util.Entity;
 
 /**
  * The AbstractAmazonDaoImpl class is used as a base for managing the CRUD operations of a DynamoDB table.  You will notice that the constructor asks for a table

@@ -1,4 +1,4 @@
-package com.nfbsoftware.sansserver.sdk.aws;
+package com.nfbsoftware.sansserverplugin.sdk.aws;
 
 import java.util.HashMap;
 import java.util.Properties;
@@ -10,8 +10,8 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentityClient;
 import com.amazonaws.services.cognitoidentity.model.GetOpenIdTokenForDeveloperIdentityRequest;
 import com.amazonaws.services.cognitoidentity.model.GetOpenIdTokenForDeveloperIdentityResult;
-import com.nfbsoftware.sansserver.sdk.util.Entity;
-import com.nfbsoftware.sansserver.sdk.util.StringUtil;
+import com.nfbsoftware.sansserverplugin.sdk.util.Entity;
+import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
 
 /**
  * The AmazonCognitoManager is used to manage the connection to Amazon's Cognito service.  There are a handful of methods to make using the service a little easier.
