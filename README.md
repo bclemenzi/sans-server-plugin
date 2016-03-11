@@ -1,5 +1,5 @@
 # SansServer Plugin
-The SansServer Plugin serves two purposed, one as a development SDK and the other as a Maven plugin to build, provision, and deploy SansServer-based applications.  To learn more about SansServer-based applications, visit:  https://github.com/bclemenzi/sans-server
+The SansServer Plugin serves two purposes, one as a development SDK and the other as a Maven plugin to build, provision, and deploy SansServer-based applications.  To learn more about SansServer-based applications, visit:  https://github.com/bclemenzi/sans-server
 
 Features
 --------
