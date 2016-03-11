@@ -65,10 +65,21 @@ public class AmazonGatewayUtility
      */
     public GetRestApiResult getRestApi(String restApiId) 
     {
-        GetRestApiRequest getRestApiRequest = new GetRestApiRequest();
-        getRestApiRequest.setRestApiId(restApiId);
+        GetRestApiResult getRestApiResult = null;
+        
+        try
+        {
+            GetRestApiRequest getRestApiRequest = new GetRestApiRequest();
+            getRestApiRequest.setRestApiId(restApiId);
 
-        return m_amazonApiGatewayClient.getRestApi(getRestApiRequest);
+            getRestApiResult =  m_amazonApiGatewayClient.getRestApi(getRestApiRequest);
+        }
+        catch (Exception e)
+        {
+            // Do nothing
+        }
+        
+        return getRestApiResult;
     }
 
     /**

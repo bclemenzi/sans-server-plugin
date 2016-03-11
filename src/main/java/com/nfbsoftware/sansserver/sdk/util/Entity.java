@@ -20,7 +20,7 @@ public class Entity
         public static final String AWS_SECRET_KEY                       = "aws.secretKey";
         
         public static final String AWS_COGNITO_IDENTITY_POOL_ID         = "aws.cognito.identityPoolId";
-        public static final String AWS_CONGITO_PROVIDER_NAME            = "aws.cognito.providerName";
+        public static final String AWS_COGNITO_PROVIDER_NAME            = "aws.cognito.providerName";
         
         public static final String AWS_LAMBDA_ROLE_ARN                  = "aws.lambda.roleArn";
         public static final String AWS_LAMBDA_MEMORY                    = "aws.lambda.memory";

@@ -1,23 +1,28 @@
 package com.nfbsoftware.sansserver.sdk.aws;
 
 import java.util.HashMap;
+import java.util.Properties;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentityClient;
 import com.amazonaws.services.cognitoidentity.model.GetOpenIdTokenForDeveloperIdentityRequest;
 import com.amazonaws.services.cognitoidentity.model.GetOpenIdTokenForDeveloperIdentityResult;
+import com.nfbsoftware.sansserver.sdk.util.Entity;
+import com.nfbsoftware.sansserver.sdk.util.StringUtil;
 
 /**
  * The AmazonCognitoManager is used to manage the connection to Amazon's Cognito service.  There are a handful of methods to make using the service a little easier.
  * 
  * @author Brendan Clemenzi
  */
-public class AmazonCognitoImpl
+public class AmazonCognitoManager
 {
-    protected AmazonCognitoIdentityClient m_amazonCognitoIdentityClient;
-    protected String m_identityPoolId;
-    protected String m_providerName;
+    private Properties m_properties;
+    
+    private AmazonCognitoIdentityClient m_amazonCognitoIdentityClient;
     
     /**
      * 
@@ -25,14 +30,19 @@ public class AmazonCognitoImpl
      * @param secretKey
      * @param IdentityPoolId
      */
-    public AmazonCognitoImpl(String accessKey, String secretKey, String identityPoolId, String providerName)
+    public AmazonCognitoManager(Properties properties)
     {
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+        m_properties = properties;
         
+        String regionName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION));
+        String accessKey = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_ACCESS_KEY));
+        String secretKey = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_SECRET_KEY));
+
+        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         m_amazonCognitoIdentityClient = new AmazonCognitoIdentityClient(credentials);
         
-        m_identityPoolId = identityPoolId;
-        m_providerName = providerName;
+        // Set our region
+        m_amazonCognitoIdentityClient.setRegion(Region.getRegion(Regions.fromName(regionName)));
     }
     
     /**
@@ -43,11 +53,14 @@ public class AmazonCognitoImpl
      */
     public GetOpenIdTokenForDeveloperIdentityResult getDeveloperIdentityResult(String userId)
     {
+        String identityPoolId = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_COGNITO_IDENTITY_POOL_ID));
+        String providerName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_COGNITO_PROVIDER_NAME));
+        
         GetOpenIdTokenForDeveloperIdentityRequest tokenRequest = new GetOpenIdTokenForDeveloperIdentityRequest();
-        tokenRequest.setIdentityPoolId(m_identityPoolId);
+        tokenRequest.setIdentityPoolId(identityPoolId);
 
         HashMap<String, String> map = new HashMap<String, String>();
-        map.put(m_providerName, userId);
+        map.put(providerName, userId);
 
         tokenRequest.setLogins(map);
         tokenRequest.setTokenDuration(new Long(10001));

@@ -1,20 +1,23 @@
 package com.nfbsoftware.sansserver.maven.plugin;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 
 /**
- * Goal which generates a lambda.properties file used to configure our Lambda function a runtime.
+ * Goal which generates a project.properties file used to configure our Lambda function a runtime.
  * 
  * @goal build-properties
- * @phase process-sources
+ * @phase generate-resources
  */
 public class PropertiesFileBuilder extends AbstractMojo
 {
+    private Log m_logger;
+    
     /**
      * Location of the file.
      * 
@@ -36,43 +39,22 @@ public class PropertiesFileBuilder extends AbstractMojo
      */
     public void execute() throws MojoExecutionException
     {
-        File f = new File(outputDirectory.getAbsolutePath() + "/classes");
-
-        if (!f.exists())
-        {
-            f.mkdirs();
-        }
-
-        File touch = new File(f, "test.properties");
+        // Grab a handle to our logger
+        m_logger = getLog();
         
-        FileWriter w = null;
+        File buildProperties = new File(rootDirectory.getAbsolutePath() + "/build.properties");
+        File projectProperties = new File(outputDirectory.getAbsolutePath() + "/classes/project.properties");
+        
         try
         {
-            w = new FileWriter(touch);
-
-            // Generate the project properties file
-            StringBuffer defaultXml = new StringBuffer();
+            m_logger.info("Generating runtime properties");
+            FileUtils.copyFile(buildProperties, projectProperties);
             
-
-            w.write(defaultXml.toString());
+            m_logger.info("Runtime properties file has been generated: " + projectProperties.getAbsolutePath());
         }
         catch (IOException e)
         {
-            throw new MojoExecutionException("Error creating file " + touch, e);
-        }
-        finally
-        {
-            if (w != null)
-            {
-                try
-                {
-                    w.close();
-                }
-                catch (IOException e)
-                {
-                    // ignore
-                }
-            }
+            throw new MojoExecutionException("Error creating our runtime properties file");
         }
     }
 }

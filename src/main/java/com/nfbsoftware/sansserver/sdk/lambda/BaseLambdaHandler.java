@@ -52,7 +52,7 @@ public class BaseLambdaHandler implements ILambdaFunction
     protected void initialize() throws Exception
     {
         // Load our properties file.  This is hard coded into our deployment
-        InputStream is = BaseLambdaHandler.class.getResourceAsStream("/lambda.properties");
+        InputStream is = BaseLambdaHandler.class.getResourceAsStream("/project.properties");
         
         // Load our properties file into memory
         m_properties.load(is);

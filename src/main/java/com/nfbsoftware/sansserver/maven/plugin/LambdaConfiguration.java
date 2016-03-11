@@ -9,7 +9,9 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -17,12 +19,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
-import com.amazonaws.services.apigateway.model.CreateResourceRequest;
 import com.amazonaws.services.apigateway.model.CreateRestApiRequest;
 import com.amazonaws.services.apigateway.model.GetRestApiResult;
-import com.amazonaws.services.apigateway.model.Integration;
-import com.amazonaws.services.apigateway.model.IntegrationType;
-import com.amazonaws.services.apigateway.model.Method;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionConfigurationRequest;
@@ -48,6 +46,8 @@ public class LambdaConfiguration extends AbstractMojo
     private AmazonGatewayUtility m_awsGatewayClient;
     
     private Properties m_properties = new Properties();
+    
+    private Map<String, Class<?>> m_lambdaClassMap = new HashMap<String, Class<?>>();
     
     private boolean m_hasGateway = false;
     
@@ -124,10 +124,15 @@ public class LambdaConfiguration extends AbstractMojo
                 
                 m_logger.info("Configure SansServer Lambda functions");
                 configureLambdaFunctions(lambdaClassFiles);
+                
+                m_logger.info("Deleting Lambda JAR from S3: " + jarFileName);
+                m_amazonS3Utility.deleteFile(deploymentFolder, jarFileName);
             }
         }
         catch (Exception e)
         {
+            e.printStackTrace();
+            
             throw new MojoExecutionException("Error processing LambdaGatewayApiConfiguration plugin", e);
         }
     }
@@ -151,16 +156,9 @@ public class LambdaConfiguration extends AbstractMojo
     {
         // Loop through our class files
         for(String classFileName : lambdaClassFiles)
-        {
-            File classesDirectory = new File(outputDirectory.getAbsolutePath() + "/classes"); 
-            
-            URL classesUrl = classesDirectory.toURI().toURL();
-            URL[] classesUrls = new URL[]{classesUrl}; 
-            
-            URLClassLoader classLoader = URLClassLoader.newInstance(classesUrls, getClass().getClassLoader());
-            
+        {            
             // Get our class file from the loader
-            Class classObject = classLoader.loadClass(classFileName); 
+            Class classObject = m_lambdaClassMap.get(classFileName);
             
             // process our AwsLambda annotations
             if(classObject.isAnnotationPresent(AwsLambda.class))
@@ -169,7 +167,7 @@ public class LambdaConfiguration extends AbstractMojo
                 
                 if(awsLambdaAnnotation != null)
                 {
-                    deployLambdaFunction(awsLambdaAnnotation.name(), awsLambdaAnnotation.desc(), awsLambdaAnnotation.handlerMethod());
+                    deployLambdaFunction(classFileName, awsLambdaAnnotation.name(), awsLambdaAnnotation.desc(), awsLambdaAnnotation.handlerMethod());
                 }
             }
             /*
@@ -232,7 +230,7 @@ public class LambdaConfiguration extends AbstractMojo
      * @param awsLambdaAnnotation
      * @throws Exception
      */
-    private void deployLambdaFunction(String name, String description, String handlerMethod) throws Exception
+    private void deployLambdaFunction(String classFileName, String name, String description, String handlerMethod) throws Exception
     {
         String environmentePrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         String lambdaRoleArn = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_LAMBDA_ROLE_ARN));
@@ -240,7 +238,8 @@ public class LambdaConfiguration extends AbstractMojo
         String lambdaMemory = StringUtil.replaceIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_LAMBDA_MEMORY), "128");
         
         // Create a generated function name so that we can isolate multiple deployments
-        String generatedlambdaName = environmentePrefix + "_" + name;
+        String generatedlambdaName = StringUtil.replaceSubstr(environmentePrefix + "_" + name, " ", "");
+        String generatedHandlerName = generateHandlerFunctionName(classFileName, handlerMethod);
         
         // Get a handle to the existing function if there is one
         GetFunctionResult getFunctionResult = m_awsLambdaClient.getFunction(generatedlambdaName);
@@ -251,7 +250,7 @@ public class LambdaConfiguration extends AbstractMojo
             updateFunctionConfigurationRequest.setDescription(description);
             updateFunctionConfigurationRequest.setRole(lambdaRoleArn);
             updateFunctionConfigurationRequest.setFunctionName(generatedlambdaName);
-            updateFunctionConfigurationRequest.setHandler(handlerMethod);
+            updateFunctionConfigurationRequest.setHandler(generatedHandlerName);
             updateFunctionConfigurationRequest.setTimeout(new Integer(lambdaTimeout));
             updateFunctionConfigurationRequest.setMemorySize(new Integer(lambdaMemory));
             
@@ -277,14 +276,32 @@ public class LambdaConfiguration extends AbstractMojo
             createFunctionRequest.setFunctionName(generatedlambdaName);
             createFunctionRequest.setDescription(description);
             createFunctionRequest.setRole(lambdaRoleArn);
-            createFunctionRequest.setHandler(handlerMethod);
-            createFunctionRequest.setRuntime("Java8");
+            createFunctionRequest.setHandler(generatedHandlerName);
+            createFunctionRequest.setRuntime(com.amazonaws.services.lambda.model.Runtime.Java8);
             createFunctionRequest.setTimeout(new Integer(lambdaTimeout));
             createFunctionRequest.setMemorySize(new Integer(lambdaMemory));
             
             // Create our function
             m_awsLambdaClient.createFunction(deploymentJarFileName, createFunctionRequest);
         }
+    }
+
+    private String generateHandlerFunctionName(String classFileName, String handlerMethod)
+    {
+        File seedDir = new File(outputDirectory.getAbsolutePath() + "/classes");
+        String seedPathString = seedDir.getAbsolutePath();
+        
+        // Remove the seed path
+        classFileName = StringUtil.replaceSubstr(classFileName, seedPathString + "/", "");
+        
+        // Remove the file extension
+        classFileName = StringUtil.replaceSubstr(classFileName, ".class", "");
+        
+        // Create a package name
+        String javaClassName = StringUtil.replaceSubstr(classFileName, "/", ".");
+        
+        String generatedHandlerName = javaClassName + "::" + handlerMethod;
+        return generatedHandlerName;
     }
     
     /**
@@ -341,6 +358,8 @@ public class LambdaConfiguration extends AbstractMojo
                 if(classObject.isAnnotationPresent(AwsLambda.class)) 
                 {
                     classfiles.add(file.getAbsolutePath());
+                    
+                    m_lambdaClassMap.put(file.getAbsolutePath(), classObject);
                 }
             }
         }

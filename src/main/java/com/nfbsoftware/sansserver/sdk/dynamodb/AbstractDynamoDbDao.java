@@ -1,8 +1,9 @@
-package com.nfbsoftware.sansserver.sdk.aws;
+package com.nfbsoftware.sansserver.sdk.dynamodb;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -13,12 +14,14 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.nfbsoftware.sansserver.sdk.util.DynamoDbUtility;
+import com.nfbsoftware.sansserver.sdk.util.Entity;
 
 /**
  * The AbstractAmazonDaoImpl class is used as a base for managing the CRUD operations of a DynamoDB table.  You will notice that the constructor asks for a table
@@ -31,35 +34,51 @@ import com.nfbsoftware.sansserver.sdk.util.DynamoDbUtility;
  * 
  * @author Brendan Clemenzi
  */
-public abstract class AbstractAmazonDaoImpl
+public abstract class AbstractDynamoDbDao
 {
     protected String m_tableName;
     protected String m_baseTableName = "";
     
+    protected Log m_logger;
+    
+    protected Properties m_properties;
+    
     protected AmazonDynamoDBClient m_amazonDynamoDBClient;
     
-    protected static Log logger = null;
-    
-    public AbstractAmazonDaoImpl(String accessKey, String secretKey, Region region, String tableNamePrefix, String baseTableName, String primaryId) throws Exception
+    /**
+     * 
+     * @param properties
+     * @param baseTableName
+     * @param primaryId
+     * @throws Exception
+     */
+    public AbstractDynamoDbDao(Properties properties, String baseTableName, String primaryId) throws Exception
     {
-        logger = LogFactory.getLog(this.getClass());
-        
+        m_logger = LogFactory.getLog(this.getClass());
+        m_properties = properties;
         m_baseTableName = baseTableName;
         
         // Set the Amazon credentials
         try
         {
+            String regionName = m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION);
+            String accessKey = m_properties.getProperty(Entity.FrameworkProperties.AWS_ACCESS_KEY);
+            String secretKey = m_properties.getProperty(Entity.FrameworkProperties.AWS_SECRET_KEY);
+            String environmentePrefix = m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX);
+            
             AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
             m_amazonDynamoDBClient = new AmazonDynamoDBClient(credentials);
-            m_amazonDynamoDBClient.setRegion(region);
+            
+            // Set our region
+            m_amazonDynamoDBClient.setRegion(Region.getRegion(Regions.fromName(regionName)));
 
-            if(!StringUtils.isNotEmpty(tableNamePrefix))
+            if(!StringUtils.isNotEmpty(environmentePrefix))
             {
                 throw new Exception("Our Amazon DynamoDB implementation requires a unique table name prefix.  Please make sure your properties files contains one.");
             }
             else
             {
-                m_tableName = tableNamePrefix + "_" + m_baseTableName;
+                m_tableName = environmentePrefix + "_" + m_baseTableName;
             }
 
             System.out.println("--> Initializing AWS DynomoDB table: " + m_tableName);
@@ -88,17 +107,17 @@ public abstract class AbstractAmazonDaoImpl
         }
         catch (AmazonServiceException ase)
         {
-            logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
-            logger.error("\nError Message:    " + ase.getMessage());
-            logger.error("\nHTTP Status Code: " + ase.getStatusCode());
-            logger.error("\nAWS Error Code:   " + ase.getErrorCode());
-            logger.error("\nError Type:       " + ase.getErrorType());
-            logger.error("\nRequest ID:       " + ase.getRequestId());
+            m_logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
+            m_logger.error("\nError Message:    " + ase.getMessage());
+            m_logger.error("\nHTTP Status Code: " + ase.getStatusCode());
+            m_logger.error("\nAWS Error Code:   " + ase.getErrorCode());
+            m_logger.error("\nError Type:       " + ase.getErrorType());
+            m_logger.error("\nRequest ID:       " + ase.getRequestId());
         }
         catch (AmazonClientException ace)
         {
-            logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
-            logger.error("Error Message: " + ace.getMessage());
+            m_logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
+            m_logger.error("Error Message: " + ace.getMessage());
         }
         
         return object;
@@ -117,19 +136,19 @@ public abstract class AbstractAmazonDaoImpl
         }
         catch (AmazonServiceException ase)
         {
-            logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
-            logger.error("\nError Message:    " + ase.getMessage());
-            logger.error("\nHTTP Status Code: " + ase.getStatusCode());
-            logger.error("\nAWS Error Code:   " + ase.getErrorCode());
-            logger.error("\nError Type:       " + ase.getErrorType());
-            logger.error("\nRequest ID:       " + ase.getRequestId());
+            m_logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
+            m_logger.error("\nError Message:    " + ase.getMessage());
+            m_logger.error("\nHTTP Status Code: " + ase.getStatusCode());
+            m_logger.error("\nAWS Error Code:   " + ase.getErrorCode());
+            m_logger.error("\nError Type:       " + ase.getErrorType());
+            m_logger.error("\nRequest ID:       " + ase.getRequestId());
             
             throw new Exception(ase.getMessage());
         }
         catch (AmazonClientException ace)
         {
-            logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
-            logger.error("Error Message: " + ace.getMessage());
+            m_logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
+            m_logger.error("Error Message: " + ace.getMessage());
             
             throw new Exception(ace.getMessage());
         }
@@ -151,19 +170,19 @@ public abstract class AbstractAmazonDaoImpl
         }
         catch (AmazonServiceException ase)
         {
-            logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
-            logger.error("\nError Message:    " + ase.getMessage());
-            logger.error("\nHTTP Status Code: " + ase.getStatusCode());
-            logger.error("\nAWS Error Code:   " + ase.getErrorCode());
-            logger.error("\nError Type:       " + ase.getErrorType());
-            logger.error("\nRequest ID:       " + ase.getRequestId());
+            m_logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
+            m_logger.error("\nError Message:    " + ase.getMessage());
+            m_logger.error("\nHTTP Status Code: " + ase.getStatusCode());
+            m_logger.error("\nAWS Error Code:   " + ase.getErrorCode());
+            m_logger.error("\nError Type:       " + ase.getErrorType());
+            m_logger.error("\nRequest ID:       " + ase.getRequestId());
             
             throw new Exception(ase.getMessage());
         }
         catch (AmazonClientException ace)
         {
-            logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
-            logger.error("Error Message: " + ace.getMessage());
+            m_logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
+            m_logger.error("Error Message: " + ace.getMessage());
             
             throw new Exception(ace.getMessage());
         }
@@ -185,19 +204,19 @@ public abstract class AbstractAmazonDaoImpl
         }
         catch (AmazonServiceException ase)
         {
-            logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
-            logger.error("\nError Message:    " + ase.getMessage());
-            logger.error("\nHTTP Status Code: " + ase.getStatusCode());
-            logger.error("\nAWS Error Code:   " + ase.getErrorCode());
-            logger.error("\nError Type:       " + ase.getErrorType());
-            logger.error("\nRequest ID:       " + ase.getRequestId());
+            m_logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
+            m_logger.error("\nError Message:    " + ase.getMessage());
+            m_logger.error("\nHTTP Status Code: " + ase.getStatusCode());
+            m_logger.error("\nAWS Error Code:   " + ase.getErrorCode());
+            m_logger.error("\nError Type:       " + ase.getErrorType());
+            m_logger.error("\nRequest ID:       " + ase.getRequestId());
             
             throw new Exception(ase.getMessage());
         }
         catch (AmazonClientException ace)
         {
-            logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
-            logger.error("Error Message: " + ace.getMessage());
+            m_logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
+            m_logger.error("Error Message: " + ace.getMessage());
             
             throw new Exception(ace.getMessage());
         }
@@ -238,19 +257,19 @@ public abstract class AbstractAmazonDaoImpl
         }
         catch (AmazonServiceException ase)
         {
-            logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
-            logger.error("\nError Message:    " + ase.getMessage());
-            logger.error("\nHTTP Status Code: " + ase.getStatusCode());
-            logger.error("\nAWS Error Code:   " + ase.getErrorCode());
-            logger.error("\nError Type:       " + ase.getErrorType());
-            logger.error("\nRequest ID:       " + ase.getRequestId());
+            m_logger.error("Caught an AmazonServiceException, which means your request made it to AWS, but was rejected with an error response for some reason.\n");
+            m_logger.error("\nError Message:    " + ase.getMessage());
+            m_logger.error("\nHTTP Status Code: " + ase.getStatusCode());
+            m_logger.error("\nAWS Error Code:   " + ase.getErrorCode());
+            m_logger.error("\nError Type:       " + ase.getErrorType());
+            m_logger.error("\nRequest ID:       " + ase.getRequestId());
             
             throw new Exception(ase.getMessage());
         }
         catch (AmazonClientException ace)
         {
-            logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
-            logger.error("Error Message: " + ace.getMessage());
+            m_logger.error("Caught an AmazonClientException, which means the client encountered a serious internal problem while trying to communicate with AWS, such as not being able to access the network.");
+            m_logger.error("Error Message: " + ace.getMessage());
             
             throw new Exception(ace.getMessage());
         }

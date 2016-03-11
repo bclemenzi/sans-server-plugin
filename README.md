@@ -28,7 +28,7 @@ Available Annotations in the SDK
  * @AWSLambda
   * Used to identify class files used for Java-based Lambda functions
   * @AwsLambda(name="View User", desc="Function to view a given user record", handlerMethod="handleRequest")
- * @AwsLambdaWithGateway
+ * @AwsLambdaWithGateway - COMING SOON
   * Used to identify class files used for Java-based Lambda functions with an API Gateway
   * @AwsLambdaWithGateway(name="Authenticate User", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", resourcePath="/login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   
@@ -46,14 +46,22 @@ Including the Maven plugin in your project by adding the following configuration
                 <groupId>com.nfbsoftware</groupId>
 				<artifactId>sans-server-plugin</artifactId>
 				<version>1.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                        <goals>
+            	<executions>
+                	<execution>
+                		<id>first-execution</id>
+                    	<goals>
+                        	<goal>build-properties</goal>
+                    	</goals>
+                    	<phase>generate-resources</phase>
+                	</execution>
+                	<execution>
+                		<id>second-execution</id>
+                    	<goals>
                         	<goal>deploy-lambda</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                    	</goals>
+                    	<phase>install</phase>
+                	</execution>
+            	</executions>
             </plugin>
 		</plugins>
 	</build>

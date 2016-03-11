@@ -97,10 +97,21 @@ public class AmazonLambdaUtility
      */
     public GetFunctionResult getFunction(String functionName) 
     {
-        GetFunctionRequest getFunctionRequest = new GetFunctionRequest();
-        getFunctionRequest.setFunctionName(functionName);
+        GetFunctionResult getFunctionResult = null;
+        
+        try
+        {
+            GetFunctionRequest getFunctionRequest = new GetFunctionRequest();
+            getFunctionRequest.setFunctionName(functionName);
 
-        return m_amazonLambdaClient.getFunction(getFunctionRequest);
+            getFunctionResult = m_amazonLambdaClient.getFunction(getFunctionRequest);
+        }
+        catch (Exception e)
+        {
+            // Do nothing
+        }
+        
+        return getFunctionResult;
     }
     
     /**
