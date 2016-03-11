@@ -5,6 +5,9 @@ Features
 --------
 
   * Custom Java Annotations for the installation and configuration of AWS artifacts
+   * Lambda Functions (Java8)
+   * AWS Gateway APIs
+   * AWS S3 Storage
   * Published on Maven Central Repository
   
 Getting started with the SDK
