@@ -17,7 +17,7 @@ Features
   
 Getting started with the SDK
 ---------------
-To use the features provided by
+To use the features provided by the SDK, include the following dependency to your project's pom.xml
 ```xml
 	<dependencies>
 			.
@@ -45,7 +45,7 @@ Available Annotations in the SDK
   
 Getting started with the Maven Plugin
 ---------------
-Including the Maven plugin in your project by adding the following configuration to your `pom.xml`:
+Including the Maven plugin in your project by adding the following configuration to your project's pom.xml
 
 ```xml
 	<build>
