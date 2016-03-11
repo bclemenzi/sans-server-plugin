@@ -4,7 +4,7 @@ The SansServer Plugin serves two purposed, one as a development SDK and the othe
 Features
 --------
 
-  * Custom Java Annotations for AWS configurations
+  * Custom Java Annotations for the installation and configuration of AWS artifacts
   * Published on Maven Central Repository
   
 Getting started with the SDK
@@ -27,10 +27,11 @@ Available Annotations in the SDK
 ---------------
  * @AWSLambda
   * Used to identify class files used for Java-based Lambda functions
-  * @AwsLambda(name="View User", desc="Function to view a given user record", handlerMethod="handleRequest")
+  * @AwsLambda(name="ViewUser", desc="Function to view a given user record", handlerMethod="handleRequest")
+  
  * @AwsLambdaWithGateway - COMING SOON
   * Used to identify class files used for Java-based Lambda functions with an API Gateway
-  * @AwsLambdaWithGateway(name="Authenticate User", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", resourcePath="/login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
+  * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   
 Getting started with the Maven Plugin
 ---------------
@@ -128,12 +129,14 @@ Available Maven Goals
   * Converts the required build.properties into our runtime properties file used by our Lambda functions
   
  * deploy-lambda-gateway
-  * Creates our S3 bucker for hosting your SansServer-based application
-  * A deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  bucket_name/deploy
+  * Creates our S3 bucket for hosting your SansServer-based application
+  * Creates a deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  "deploy"
   * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
   * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::bucket_name/*"
   
  * deploy-webapp - COMING SOON
+  * Creates our S3 bucket for hosting your SansServer-based application
+  * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
   * Uploads the contents of the project's src/main/webapp folder to your S3 bucket.
   
   
