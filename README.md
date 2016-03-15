@@ -26,7 +26,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 	</dependencies>
 ```
@@ -38,7 +38,7 @@ Available Annotations in the SDK
   * @AwsLambda(name="ViewUser", desc="Function to view a given user record", handlerMethod="handleRequest")
   * @AwsLambda(name="ViewUser", desc="Function to view a given user record", handlerMethod="handleRequest", memorySize="512", timeout="60")
   
- * @AwsLambdaWithGateway - COMING SOON
+ * @AwsLambdaWithGateway
   * Used to identify class files used for Java-based Lambda functions with an API Gateway
   * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", memorySize="512", timeout="60", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
@@ -56,7 +56,7 @@ Including the Maven plugin in your project by adding the following configuration
 			<plugin>
                 <groupId>com.nfbsoftware</groupId>
 				<artifactId>sans-server-plugin</artifactId>
-				<version>1.0.1</version>
+				<version>1.0.2</version>
             	<executions>
                 	<execution>
                 		<id>first-execution</id>
@@ -72,8 +72,85 @@ Including the Maven plugin in your project by adding the following configuration
                     	</goals>
                     	<phase>install</phase>
                 	</execution>
+                	<execution>
+                		<id>third-execution</id>
+                    	<goals>
+                        	<goal>deploy-webapp</goal>
+                    	</goals>
+                    	<phase>install</phase>
+                	</execution>
             	</executions>
             </plugin>
+		</plugins>
+	</build>
+```
+
+If you are running your Maven builds from inside Eclipse, you may need to add the following plugin management to configure our lifecycle mappings
+
+```xml
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+                	<artifactId>lifecycle-mapping</artifactId>
+                	<version>1.0.0</version>              
+                	<configuration>
+                  		<lifecycleMappingMetadata>
+                     		<pluginExecutions>
+                     			<pluginExecution>                     
+                         			<pluginExecutionFilter>
+                           				<groupId>com.nfbsoftware</groupId>
+                           				<artifactId>sans-server-plugin</artifactId>
+                           				<versionRange>[1.0,)</versionRange>                
+                         				<goals>
+                         	  				<goal>build-properties</goal>
+                         	  				<goal>deploy-lambda</goal>
+                         	  				<goal>deploy-webapp</goal>
+                           				</goals>
+                         			</pluginExecutionFilter>
+                         			<action>
+                           				<ignore />
+                         			</action>
+                       			</pluginExecution>
+					   			<pluginExecution>
+                         			<pluginExecutionFilter>
+                           				<groupId>org.apache.maven.plugins</groupId>
+						   				<artifactId>maven-resources-plugin</artifactId>
+                           				<versionRange>[1.0,)</versionRange>
+                           				<goals>
+                              				<goal>resources</goal>
+                              				<goal>testResources</goal>
+                           				</goals>
+                         			</pluginExecutionFilter>
+                         			<action>
+                           				<ignore />
+                         			</action>
+                       			</pluginExecution>
+                       			<pluginExecution>
+                         			<pluginExecutionFilter>
+                           				<groupId>org.codehaus.mojo</groupId>
+						   				<artifactId>aspectj-maven-plugin</artifactId>
+                           				<versionRange>[1.0.1,)</versionRange>
+                           				<goals>
+                              				<goal>test-compile</goal>
+                              				<goal>compile</goal>
+                           				</goals>
+                         			</pluginExecutionFilter>
+                         			<action>
+                           				<ignore />
+                         			</action>
+                       			</pluginExecution>                       
+                     		</pluginExecutions>
+                  		</lifecycleMappingMetadata>                
+                	</configuration>
+            	</plugin>
+          	</plugins>
+      	</pluginManagement>
+      	<plugins>
+			.
+			. BUILD PLUGINS, INCLUDING OUR SANS-SERVER-PLUGIN 
+			.
 		</plugins>
 	</build>
 ```
@@ -88,15 +165,15 @@ Available Maven Goals
 --------
  * build-properties
   * Converts the required build.properties into our runtime properties file used by our Lambda functions
- * deploy-lambda-gateway
+ * deploy-lambda
   * Creates our S3 bucket for hosting your SansServer-based application
   * Creates a deployment folder used to store the deployed versions of our Lambda functions.  The default is set to:  "deploy".  Deployment JARs are removed from this directory once the functions have been created/updated in AWS.
   * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::<bucket_name>/*"
- * deploy-webapp :: COMING SOON
+ * deploy-webapp
   * Creates our S3 bucket for hosting your SansServer-based application
   * Configures the bucket for Static Website Hosting setting the Index Doc to "index.html" and the Error Doc to "error.html"
   * Creates a bucket policy statement that allows s3:GetObject on "arn:aws:s3:::<bucket_name>/*"
-  * Uploads the contents of the project's src/main/webapp folder to your S3 bucket.
+  * Uploads the contents of the project's src/main/webapp folder to your configured S3 bucket.
 
 SansServer-Plugin Requirements
 --------

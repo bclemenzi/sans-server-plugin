@@ -74,6 +74,9 @@ public class DeployWebApplication extends AbstractMojo
             m_logger.info("Creating javascript configuration utility file");
             generateJavascriptUtility();
             
+            m_logger.info("Clean webapp destination");
+            cleanWebappDestination();
+            
             m_logger.info("Deploy webapp to S3");
             copyWebApplicationToS3();
         }
@@ -81,6 +84,15 @@ public class DeployWebApplication extends AbstractMojo
         {
             throw new MojoExecutionException("Error deploying out web application");
         }
+    }
+    
+    /**
+     * 
+     * @throws Exception
+     */
+    private void cleanWebappDestination() throws Exception
+    {
+        // TODO Clear out all the static files on S3
     }
     
     /**
