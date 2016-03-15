@@ -13,6 +13,7 @@ Features
    * AmazonSESManager
    * AmazonCognitoManager
    * AbstractDynamoDbDao
+  * JUnit test harness for locally testing your Lambda functions before deployment
   * Configuration schema to allow for the isolation of multiple deployments:  Multi-Engineer Development, QA, Production
   * Published on Maven Central Repository
   
