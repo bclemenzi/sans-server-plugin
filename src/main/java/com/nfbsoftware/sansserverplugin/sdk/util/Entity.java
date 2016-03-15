@@ -14,8 +14,10 @@ public class Entity
     public class FrameworkProperties
     {
         public static final String ENVIRONEMNT_PREFIX                   = "environment.namePrefix";
+        public static final String ENVIRONEMNT_STAGE                    = "environment.stage";
         
         public static final String AWS_REGION                           = "aws.region";
+        public static final String AWS_ACCOUNT_ID                       = "aws.accountId";
         public static final String AWS_ACCESS_KEY                       = "aws.accessKey";
         public static final String AWS_SECRET_KEY                       = "aws.secretKey";
         

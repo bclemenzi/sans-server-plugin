@@ -10,6 +10,7 @@ environment.namePrefix=xxxxxxxxx
 # AWS API Configuration
 ##############################################################################################################
 aws.region=us-east-1
+aws.accountId=xxxxxxxxxxxxxxxx
 aws.accessKey=AKIAxxxxxxxxxxxxxxxx
 aws.secretKey=X+hfxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 

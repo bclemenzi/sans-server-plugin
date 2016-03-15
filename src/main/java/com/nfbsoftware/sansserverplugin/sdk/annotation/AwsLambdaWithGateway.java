@@ -19,7 +19,7 @@ public @interface AwsLambdaWithGateway
      */
     public enum AuthorizationTypes
     {
-        OPEN, KEY, AWS_IAM
+        OPEN, KEY, AWS_IAM, NONE
     }
 
     /**

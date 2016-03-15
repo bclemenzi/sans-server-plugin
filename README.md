@@ -107,6 +107,8 @@ The SansServer-Plugin (SDK/Maven) expects there to be build.properties file foun
   * I recommend creating an environment name prefix to isolate multiple environments QA, PRODUCTION, or developer's name to isolate this bucket in AWS
  * aws.region
   * This is the String value of Amazon's region that your deployment should be provisioned
+ * aws.accountId
+  * Your AWS account ID
  * aws.accessKey
   * Your user's AWS access key.
  * aws.secretKey

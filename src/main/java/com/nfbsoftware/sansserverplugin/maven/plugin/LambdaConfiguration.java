@@ -19,8 +19,18 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
+import com.amazonaws.services.apigateway.model.CreateDeploymentRequest;
+import com.amazonaws.services.apigateway.model.CreateResourceRequest;
+import com.amazonaws.services.apigateway.model.CreateResourceResult;
 import com.amazonaws.services.apigateway.model.CreateRestApiRequest;
 import com.amazonaws.services.apigateway.model.GetRestApiResult;
+import com.amazonaws.services.apigateway.model.IntegrationType;
+import com.amazonaws.services.apigateway.model.PutIntegrationRequest;
+import com.amazonaws.services.apigateway.model.PutIntegrationResponseRequest;
+import com.amazonaws.services.apigateway.model.PutMethodRequest;
+import com.amazonaws.services.apigateway.model.PutMethodResponseRequest;
+import com.amazonaws.services.apigateway.model.Resource;
+import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionConfigurationRequest;
@@ -28,7 +38,9 @@ import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonGatewayUtility;
 import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonLambdaUtility;
 import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonS3Utility;
 import com.nfbsoftware.sansserverplugin.sdk.annotation.AwsLambda;
+import com.nfbsoftware.sansserverplugin.sdk.annotation.AwsLambdaWithGateway;
 import com.nfbsoftware.sansserverplugin.sdk.util.Entity;
+import com.nfbsoftware.sansserverplugin.sdk.util.SecureUUID;
 import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
 
 /**
@@ -93,7 +105,7 @@ public class LambdaConfiguration extends AbstractMojo
             // Grab a handle to our logger
             m_logger = getLog();
             
-            m_logger.info("Loading SansServer lambda.properties file");
+            m_logger.info("Loading SansServer build.properties file");
             File propertiesFile = new File(rootDirectory.getAbsolutePath() + "/build.properties");
             InputStream inStream = new FileInputStream(propertiesFile);
             m_properties.load(inStream);
@@ -170,7 +182,6 @@ public class LambdaConfiguration extends AbstractMojo
                     deployLambdaFunction(classFileName, awsLambdaAnnotation.name(), awsLambdaAnnotation.desc(), awsLambdaAnnotation.handlerMethod(), awsLambdaAnnotation.memorySize(), awsLambdaAnnotation.timeout());
                 }
             }
-            /*
             if(classObject.isAnnotationPresent(AwsLambdaWithGateway.class))
             {
                 AwsLambdaWithGateway awsLambdaWithGatewayAnnotation = (AwsLambdaWithGateway)classObject.getAnnotation(AwsLambdaWithGateway.class);
@@ -178,7 +189,7 @@ public class LambdaConfiguration extends AbstractMojo
                 if(awsLambdaWithGatewayAnnotation != null)
                 {
                     // Deploy out Lambda function
-                    deployLambdaFunction(classFileName, awsLambdaAnnotation.name(), awsLambdaAnnotation.desc(), awsLambdaAnnotation.handlerMethod(), awsLambdaAnnotation.memorySize(), awsLambdaAnnotation.timeout());
+                    deployLambdaFunction(classFileName, awsLambdaWithGatewayAnnotation.name(), awsLambdaWithGatewayAnnotation.desc(), awsLambdaWithGatewayAnnotation.handlerMethod(), awsLambdaWithGatewayAnnotation.memorySize(), awsLambdaWithGatewayAnnotation.timeout());
                     
                     // Make sure we have our API Gateway to link our Lambda functions to
                     if(!m_hasGateway)
@@ -186,11 +197,10 @@ public class LambdaConfiguration extends AbstractMojo
                         createAPIGateway();
                     }
                     
-                    // Deploy our API Gateway
-                    deployGatewayAPIforLambdaFunction(awsLambdaWithGatewayAnnotation);
+                    // TODO finish the API integration because at the time of this writing there was no support for Lambda configurations in the AWS SDK
+                    deployGatewayAPIforLambdaFunction(classFileName, awsLambdaWithGatewayAnnotation.name(), awsLambdaWithGatewayAnnotation);
                 }
             }
-            */
         }
     }
     
@@ -200,10 +210,10 @@ public class LambdaConfiguration extends AbstractMojo
      */
     private void createAPIGateway() throws Exception
     {
-        String environmentePrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
+        String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         
         // Generate our environment-based gateway name
-        String projectGatewayName = environmentePrefix + "_" + projectName;
+        String projectGatewayName = environmentPrefix + "_" + projectName;
         
         GetRestApiResult restApiResult = m_awsGatewayClient.getRestApiByName(projectGatewayName);
         
@@ -227,16 +237,190 @@ public class LambdaConfiguration extends AbstractMojo
     
     /**
      * 
+     * @param awsLambdaWithGatewayAnnotation
+     */
+    private void deployGatewayAPIforLambdaFunction(String classFileName, String name, AwsLambdaWithGateway awsLambdaWithGatewayAnnotation) throws Exception
+    {
+        String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
+        String regionName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION));
+        String accountId = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_ACCOUNT_ID));
+        String stageName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_STAGE));
+        
+        // Create a generated function name so that we can isolate multiple deployments
+        String projectGatewayName = environmentPrefix + "_" + projectName;
+        String generatedlambdaName = StringUtil.replaceSubstr(environmentPrefix + "_" + name, " ", "");
+        
+        m_logger.info("projectGatewayName: " + projectGatewayName);
+        m_logger.info("generatedlambdaName: " + generatedlambdaName);
+        
+        // Get a handle to the existing function if there is one
+        GetFunctionResult getFunctionResult = m_awsLambdaClient.getFunction(generatedlambdaName);
+        
+        if(getFunctionResult != null)
+        {
+            GetRestApiResult getRestApiResult = m_awsGatewayClient.getRestApiByName(projectGatewayName);
+            
+            if(getRestApiResult != null)
+            {
+                Resource resourceObject = m_awsGatewayClient.getResourceByPathPart(getRestApiResult.getId(), awsLambdaWithGatewayAnnotation.resourceName());
+                
+                if(resourceObject != null)
+                {
+                    // Update the existing api
+                    m_logger.info("Resource (" + awsLambdaWithGatewayAnnotation.resourceName() + ") Found: " + resourceObject.getId());
+                }
+                else
+                {
+                    m_logger.info("Resource Not Found: " + awsLambdaWithGatewayAnnotation.resourceName());
+                    
+                    Resource rootResource = m_awsGatewayClient.getResourceByPath(getRestApiResult.getId(), "/");
+                    
+                    // create a new api resourse
+                    CreateResourceRequest createResourceRequest = new CreateResourceRequest();
+                    createResourceRequest.setPathPart(awsLambdaWithGatewayAnnotation.resourceName());
+                    createResourceRequest.setRestApiId(getRestApiResult.getId());
+                    createResourceRequest.setParentId(rootResource.getId());
+                    
+                    m_logger.info("Creating Resource Request"); 
+                    CreateResourceResult createResourceResult = m_awsGatewayClient.createResource(createResourceRequest);
+                    
+                    if(createResourceResult != null)
+                    {
+                        m_logger.info("Create our method with type: " + awsLambdaWithGatewayAnnotation.method().name() + "  authorization: " + awsLambdaWithGatewayAnnotation.authorization().name()); 
+                        PutMethodRequest putMethodRequest = new PutMethodRequest();
+                        putMethodRequest.setRestApiId(getRestApiResult.getId());
+                        putMethodRequest.setResourceId(createResourceResult.getId());
+                        putMethodRequest.setApiKeyRequired(awsLambdaWithGatewayAnnotation.keyRequired());
+                        putMethodRequest.setAuthorizationType(awsLambdaWithGatewayAnnotation.authorization().name());
+                        putMethodRequest.setHttpMethod(awsLambdaWithGatewayAnnotation.method().name());
+                        
+                        if(awsLambdaWithGatewayAnnotation.enableCORS())
+                        {
+                            m_logger.info("Enable CORS for our method request"); 
+                            putMethodRequest.putCustomRequestHeader("Access-Control-Allow-Origin", "*");
+                            putMethodRequest.putCustomRequestHeader("Access-Control-Max-Age", "3600");
+                            putMethodRequest.putCustomRequestHeader("Access-Control-Allow-Methods", awsLambdaWithGatewayAnnotation.authorization().name() + ",OPTIONS");
+                            putMethodRequest.putCustomRequestHeader("Access-Control-Allow-Headers", "Content-Type,X-Amz-Date,Authorization,X-Api-Key");
+                        }
+                        
+                        m_awsGatewayClient.createMethod(putMethodRequest);
+                        
+                        m_logger.info("Create our integration"); 
+                        PutIntegrationRequest putIntegrationRequest = new PutIntegrationRequest();
+                        putIntegrationRequest.setRestApiId(getRestApiResult.getId());
+                        putIntegrationRequest.setResourceId(createResourceResult.getId());
+                        putIntegrationRequest.setHttpMethod(awsLambdaWithGatewayAnnotation.method().name());
+                        putIntegrationRequest.setType(IntegrationType.AWS);
+                        putIntegrationRequest.setIntegrationHttpMethod(awsLambdaWithGatewayAnnotation.method().name());
+                        
+                        String lambdaUriArn = "arn:aws:apigateway:" + regionName + ":lambda:path/2015-03-31/functions/arn:aws:lambda:" + regionName + ":" + accountId + ":function:" + generatedlambdaName + "/invocations";
+                        putIntegrationRequest.setUri(lambdaUriArn);
+                        
+                        m_awsGatewayClient.createIntegration(putIntegrationRequest);
+                        
+                        m_logger.info("Create our method response"); 
+                        PutMethodResponseRequest putMethodResponseRequest = new PutMethodResponseRequest();
+                        putMethodResponseRequest.setRestApiId(getRestApiResult.getId());
+                        putMethodResponseRequest.setResourceId(createResourceResult.getId());
+                        putMethodResponseRequest.setHttpMethod(awsLambdaWithGatewayAnnotation.method().name());
+                        putMethodResponseRequest.setStatusCode("200");
+                        
+                        Map<String, String> responseModels = new HashMap<String, String>();
+                        responseModels.put("application/json", "Empty");
+                        putMethodResponseRequest.setResponseModels(responseModels);
+                        
+                        if(awsLambdaWithGatewayAnnotation.enableCORS())
+                        {
+                            m_logger.info("Enable CORS for our method response"); 
+                            putMethodResponseRequest.putCustomRequestHeader("Access-Control-Allow-Origin", "*");
+                            putMethodResponseRequest.putCustomRequestHeader("Access-Control-Max-Age", "3600");
+                            putMethodResponseRequest.putCustomRequestHeader("Access-Control-Allow-Methods", awsLambdaWithGatewayAnnotation.authorization().name() + ",OPTIONS");
+                            putMethodResponseRequest.putCustomRequestHeader("Access-Control-Allow-Headers", "Content-Type,X-Amz-Date,Authorization,X-Api-Key");
+                        }
+                        
+                        m_awsGatewayClient.createMethodResponse(putMethodResponseRequest);
+                        
+                        m_logger.info("Create our integration response"); 
+                        PutIntegrationResponseRequest putIntegrationResponseRequest = new PutIntegrationResponseRequest();
+                        putIntegrationResponseRequest.setRestApiId(getRestApiResult.getId());
+                        putIntegrationResponseRequest.setResourceId(createResourceResult.getId());
+                        putIntegrationResponseRequest.setHttpMethod(awsLambdaWithGatewayAnnotation.method().name());
+                        putIntegrationResponseRequest.setStatusCode("200");
+                        //putIntegrationResponseRequest.setSelectionPattern(".*");
+                        
+                        Map<String, String> responseTemplates = new HashMap<String, String>();
+                        responseTemplates.put("application/json", "");
+                        putIntegrationResponseRequest.setResponseTemplates(responseTemplates);
+                        
+                        m_awsGatewayClient.createIntegrationResponse(putIntegrationResponseRequest);
+                        
+                        m_logger.info("Create our api deployment"); 
+                        CreateDeploymentRequest createDeploymentRequest = new CreateDeploymentRequest();
+                        createDeploymentRequest.setRestApiId(getRestApiResult.getId());
+                        createDeploymentRequest.setStageName(stageName);
+                        createDeploymentRequest.setStageDescription("Auto Generated State: " + stageName);
+                        
+                        m_awsGatewayClient.createDeployment(createDeploymentRequest);
+                        
+                        m_logger.info("Create our function permissions for testing"); 
+                        AddPermissionRequest testinAddPermissionRequest = new AddPermissionRequest();
+                        testinAddPermissionRequest.setFunctionName(generatedlambdaName);
+                        
+                        String testStatementId = "apigateway-" + environmentPrefix + "-test-" + SecureUUID.generateUniqueNumber(4);
+                        testinAddPermissionRequest.setStatementId(testStatementId.toLowerCase());
+                        testinAddPermissionRequest.setAction("lambda:InvokeFunction");
+                        testinAddPermissionRequest.setPrincipal("apigateway.amazonaws.com");
+                        
+                        String testSourceArn = "arn:aws:execute-api:" + regionName + ":" + accountId + ":" + getRestApiResult.getId() + "/*/" + awsLambdaWithGatewayAnnotation.method().name() + "/" + awsLambdaWithGatewayAnnotation.resourceName();
+                        testinAddPermissionRequest.setSourceArn(testSourceArn);
+                        
+                        m_awsLambdaClient.addPermission(testinAddPermissionRequest);
+                        
+                        m_logger.info("Create our function permissions for the deployment"); 
+                        AddPermissionRequest deployAddPermissionRequest = new AddPermissionRequest();
+                        deployAddPermissionRequest.setFunctionName(generatedlambdaName);
+                        
+                        String deployStatementId = "apigateway-" + environmentPrefix + "-" + stageName + "-" + SecureUUID.generateUniqueNumber(4);
+                        deployAddPermissionRequest.setStatementId(deployStatementId.toLowerCase());
+                        deployAddPermissionRequest.setAction("lambda:InvokeFunction");
+                        deployAddPermissionRequest.setPrincipal("apigateway.amazonaws.com");
+                        
+                        String deploySourceArn = "arn:aws:execute-api:" + regionName + ":" + accountId + ":" + getRestApiResult.getId() + "/" + stageName + "/" + awsLambdaWithGatewayAnnotation.method().name() + "/" + awsLambdaWithGatewayAnnotation.resourceName();
+                        deployAddPermissionRequest.setSourceArn(deploySourceArn);
+                        
+                        m_awsLambdaClient.addPermission(deployAddPermissionRequest);
+                        
+                        // Check if we should enable CORS
+                        if(awsLambdaWithGatewayAnnotation.enableCORS())
+                        {
+                            m_logger.info("Unable to configure CORS on your resource method.  SansServer-Plugin does not currectly support this function.  Please manage this through the AWS Console for the time being.");
+                            
+                            // TODO Add CORS support
+                        }
+                        
+                        m_logger.info("Lambda Gateway API Complete"); 
+                    }
+                    else
+                    {
+                        throw new Exception("Unable to find new REST API resource: " + awsLambdaWithGatewayAnnotation.resourceName());
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * 
      * @param awsLambdaAnnotation
      * @throws Exception
      */
     private void deployLambdaFunction(String classFileName, String name, String description, String handlerMethod, String memorySize, String timeout) throws Exception
     {
-        String environmentePrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
+        String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         String lambdaRoleArn = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_LAMBDA_ROLE_ARN));
         
         // Create a generated function name so that we can isolate multiple deployments
-        String generatedlambdaName = StringUtil.replaceSubstr(environmentePrefix + "_" + name, " ", "");
+        String generatedlambdaName = StringUtil.replaceSubstr(environmentPrefix + "_" + name, " ", "");
         String generatedHandlerName = generateHandlerFunctionName(classFileName, handlerMethod);
         
         // Get a handle to the existing function if there is one
@@ -353,7 +537,8 @@ public class LambdaConfiguration extends AbstractMojo
                 Class classObject = classLoader.loadClass(javaClassName); 
 
                 // Look for our custom annotations
-                if(classObject.isAnnotationPresent(AwsLambda.class)) 
+                if(classObject.isAnnotationPresent(AwsLambda.class) 
+                        || classObject.isAnnotationPresent(AwsLambdaWithGateway.class)) 
                 {
                     classfiles.add(file.getAbsolutePath());
                     

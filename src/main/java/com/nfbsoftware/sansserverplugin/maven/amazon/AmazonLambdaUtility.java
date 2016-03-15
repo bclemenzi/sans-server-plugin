@@ -9,6 +9,8 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.AWSLambdaClient;
+import com.amazonaws.services.lambda.model.AddPermissionRequest;
+import com.amazonaws.services.lambda.model.AddPermissionResult;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.FunctionCode;
@@ -192,6 +194,25 @@ public class AmazonLambdaUtility
         else
         {
             throw new Exception("Error creating Lambda function: " + createFunctionRequest.getFunctionName());
+        }
+    }
+    
+    /**
+     * 
+     * @param addPermissionRequest
+     * @throws Exception
+     */
+    public void addPermission(AddPermissionRequest addPermissionRequest) throws Exception
+    {
+        AddPermissionResult addPermissionResult = m_amazonLambdaClient.addPermission(addPermissionRequest);
+        
+        if(addPermissionResult != null)
+        {
+            m_logger.info("Lambda function permission (" + addPermissionRequest.getFunctionName() + ") has been created with ARN: " + addPermissionResult.hashCode());
+        }
+        else
+        {
+            throw new Exception("Error creating Lambda function permission: " + addPermissionRequest.getFunctionName());
         }
     }
 }

@@ -199,18 +199,7 @@ public class AmazonS3Utility
      */
     public void uploadFile(String folderName, String fileName, File fileObject) throws Exception
     {
-        uploadFile(folderName, fileName, fileObject, false);
-    }
-
-    /**
-     * 
-     * @param fileName
-     * @param fileObject
-     * @throws Exception
-     */
-    public void uploadFile(String folderName, String fileName, File fileObject, boolean skipScan) throws Exception
-    {
-        boolean isSuccessful = uploadToAwsS3(folderName, fileName, fileObject, skipScan);
+        boolean isSuccessful = uploadToAwsS3(folderName, fileName, fileObject);
 
         if (!isSuccessful)
         {
@@ -360,13 +349,19 @@ public class AmazonS3Utility
      * @return
      * @throws IOException
      */
-    private boolean uploadToAwsS3(String folderName, String fileName, File fileObject, boolean skipScan)
+    private boolean uploadToAwsS3(String folderName, String fileName, File fileObject)
     {
         boolean uploadSuccessful = false;
 
         if ((!StringUtil.isNullOrEmpty(fileName)) && (fileObject != null))
         {
-            String tempName = folderName + "/" + fileName;
+            String tempName = fileName;
+            
+            // If a folder name was passed in, use it.
+            if(!StringUtil.isNullOrEmpty(folderName))
+            {
+                tempName = folderName + "/" + fileName;
+            }
 
             try
             {

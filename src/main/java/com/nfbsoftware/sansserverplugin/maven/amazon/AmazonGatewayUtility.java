@@ -10,6 +10,8 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.apigateway.AmazonApiGatewayClient;
+import com.amazonaws.services.apigateway.model.CreateDeploymentRequest;
+import com.amazonaws.services.apigateway.model.CreateDeploymentResult;
 import com.amazonaws.services.apigateway.model.CreateResourceRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceResult;
 import com.amazonaws.services.apigateway.model.CreateRestApiRequest;
@@ -22,6 +24,15 @@ import com.amazonaws.services.apigateway.model.GetRestApiRequest;
 import com.amazonaws.services.apigateway.model.GetRestApiResult;
 import com.amazonaws.services.apigateway.model.GetRestApisRequest;
 import com.amazonaws.services.apigateway.model.GetRestApisResult;
+import com.amazonaws.services.apigateway.model.Method;
+import com.amazonaws.services.apigateway.model.PutIntegrationRequest;
+import com.amazonaws.services.apigateway.model.PutIntegrationResponseRequest;
+import com.amazonaws.services.apigateway.model.PutIntegrationResponseResult;
+import com.amazonaws.services.apigateway.model.PutIntegrationResult;
+import com.amazonaws.services.apigateway.model.PutMethodRequest;
+import com.amazonaws.services.apigateway.model.PutMethodResponseRequest;
+import com.amazonaws.services.apigateway.model.PutMethodResponseResult;
+import com.amazonaws.services.apigateway.model.PutMethodResult;
 import com.amazonaws.services.apigateway.model.Resource;
 import com.amazonaws.services.apigateway.model.RestApi;
 import com.amazonaws.services.apigateway.model.UpdateResourceRequest;
@@ -29,6 +40,7 @@ import com.amazonaws.services.apigateway.model.UpdateResourceResult;
 import com.amazonaws.services.apigateway.model.UpdateRestApiRequest;
 import com.amazonaws.services.apigateway.model.UpdateRestApiResult;
 import com.nfbsoftware.sansserverplugin.sdk.util.Entity;
+import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
 
 /**
  * 
@@ -56,6 +68,28 @@ public class AmazonGatewayUtility
 
         // Set our region
         m_amazonApiGatewayClient.setRegion(Region.getRegion(Regions.fromName(regionName)));
+    }
+    
+    /**
+     * 
+     * @param restApiName
+     * @return
+     */
+    public String getRestApiInvokeUrl(String restApiName)
+    {
+        String invokeUrl = "";
+
+        GetRestApiResult getRestApiResult = getRestApiByName(restApiName);
+        
+        if(getRestApiResult != null)
+        {
+            String regionName = m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION);
+            String stateName = m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_STAGE);
+            
+            invokeUrl = "https://" + getRestApiResult.getId() + ".execute-api." + regionName + ".amazonaws.com/" + stateName;
+        }
+        
+        return invokeUrl;
     }
     
     /**
@@ -98,15 +132,52 @@ public class AmazonGatewayUtility
         
         for(RestApi restApi : restApis)
         {
-            String tempName = restApi.getName();
+            String tempApiName = StringUtil.emptyIfNull(restApi.getName());
+            m_logger.info("tempApiName: " + tempApiName + "  " + restApi.toString());
             
-            if(tempName.equalsIgnoreCase(restApiName))
+            if(tempApiName.equalsIgnoreCase(restApiName))
             {
+                m_logger.info("RestAPI Found: " + restApi.getId());
                 restApiResult = getRestApi(restApi.getId());
             }
         }
 
         return restApiResult;
+    }
+    
+    /**
+     * 
+     * @param restApiName
+     * @return
+     */
+    public GetResourceResult getRestApiRootResource(String restApiId) throws Exception
+    {
+        GetResourceResult getResourceResult = null;
+        GetRestApiResult restApiResult = getRestApi(restApiId);
+        
+        if(restApiResult != null)
+        {
+            GetResourcesRequest getResoursesRequest = new GetResourcesRequest();
+            getResoursesRequest.setRestApiId(restApiResult.getId());
+            
+            GetResourcesResult result = m_amazonApiGatewayClient.getResources(getResoursesRequest);
+            
+            List<Resource> resources = result.getItems();
+            
+            for(Resource resource : resources)
+            {
+                String tempPath = StringUtil.emptyIfNull(resource.getPath());
+                m_logger.info("getRestApiRootResource tempPath: " + tempPath + "  " + resource.toString());
+                
+                if(tempPath.equalsIgnoreCase("/"))
+                {
+                    m_logger.info("getRestApiRootResource tempPath found: " + resource.getId());
+                    getResourceResult = getResource(resource.getId());
+                }
+            }
+        }
+        
+        return getResourceResult;
     }
     
     /**
@@ -154,10 +225,23 @@ public class AmazonGatewayUtility
      */
     public GetResourceResult getResource(String resourceId) throws Exception
     {
-        GetResourceRequest getResourceRequest = new GetResourceRequest();
-        getResourceRequest.setResourceId(resourceId);
+        GetResourceResult getResourceResult = null;
         
-        return m_amazonApiGatewayClient.getResource(getResourceRequest);
+        try
+        {
+            GetResourceRequest getResourceRequest = new GetResourceRequest();
+            getResourceRequest.setResourceId(resourceId);
+            
+            getResourceResult = m_amazonApiGatewayClient.getResource(getResourceRequest);
+        }
+        catch (Exception e)
+        {
+            m_logger.error("Error loading resource: " + resourceId);
+            
+            e.printStackTrace();
+        }
+        
+        return getResourceResult;
     }
     
     /**
@@ -167,9 +251,9 @@ public class AmazonGatewayUtility
      * @return
      * @throws Exception
      */
-    public GetResourceResult getResourceByPathPart(String restApiId, String pathPart) throws Exception
+    public Resource getResourceByPath(String restApiId, String path) throws Exception
     {
-        GetResourceResult getResourceResult = null;
+        Resource resourceObject = null;
         
         GetResourcesRequest getResoursesRequest = new GetResourcesRequest();
         getResoursesRequest.setRestApiId(restApiId);
@@ -180,15 +264,49 @@ public class AmazonGatewayUtility
         
         for(Resource resource : resources)
         {
-            String tempPathPart = resource.getPathPart();
+            String tempPath = StringUtil.emptyIfNull(resource.getPath());
+            m_logger.info("tempPath: " + tempPath + "   " + resource.toString());
             
-            if(tempPathPart.equalsIgnoreCase(pathPart))
+            if(tempPath.equalsIgnoreCase(path))
             {
-                getResourceResult = getResource(resource.getId());
+                m_logger.info("Resource found by path (" + path + "): " + resource.getId());
+                resourceObject = resource;
             }
         }
 
-        return getResourceResult;
+        return resourceObject;
+    }
+    
+    /**
+     * 
+     * @param restApiId
+     * @param pathPart
+     * @return
+     * @throws Exception
+     */
+    public Resource getResourceByPathPart(String restApiId, String pathPart) throws Exception
+    {
+        Resource resourceObject = null;
+        
+        GetResourcesRequest getResoursesRequest = new GetResourcesRequest();
+        getResoursesRequest.setRestApiId(restApiId);
+        
+        GetResourcesResult result = m_amazonApiGatewayClient.getResources(getResoursesRequest);
+        
+        List<Resource> resources = result.getItems();
+        
+        for(Resource resource : resources)
+        {
+            String tempPathPart = StringUtil.emptyIfNull(resource.getPathPart());
+            m_logger.info("tempPathPart: " + tempPathPart + "   " + resource.toString());
+            
+            if(tempPathPart.equalsIgnoreCase(pathPart))
+            {
+                resourceObject = resource;
+            }
+        }
+
+        return resourceObject;
     }
     
     /**
@@ -196,7 +314,7 @@ public class AmazonGatewayUtility
      * @param createResourceRequest
      * @throws Exception
      */
-    public void createResource(CreateResourceRequest createResourceRequest) throws Exception
+    public CreateResourceResult createResource(CreateResourceRequest createResourceRequest) throws Exception
     {
         CreateResourceResult result = m_amazonApiGatewayClient.createResource(createResourceRequest);
         
@@ -208,6 +326,8 @@ public class AmazonGatewayUtility
         {
             throw new Exception("Error creating Gateway API Resource: " + createResourceRequest.getPathPart());
         }
+        
+        return result;
     }
     
     /**
@@ -227,5 +347,116 @@ public class AmazonGatewayUtility
         {
             throw new Exception("Error updating Gateway API Resource: " + updateResourceRequest.getResourceId());
         }
+    }
+    
+    /**
+     * 
+     * @param putMethodRequest
+     * @return
+     * @throws Exception
+     */
+    public PutMethodResult createMethod(PutMethodRequest putMethodRequest) throws Exception
+    {
+        PutMethodResult putMethodResult = m_amazonApiGatewayClient.putMethod(putMethodRequest);
+        
+        if(putMethodResult != null)
+        {
+            m_logger.info("Gateway API Resource Method (" + putMethodRequest.getHttpMethod() + ") has been created");
+        }
+        else
+        {
+            throw new Exception("Error creating Gateway API Resource Method: " + putMethodRequest.getHttpMethod());
+        }
+        
+        return putMethodResult;
+    }
+    
+    
+    /**
+     * 
+     * @param putMethodResponseRequest
+     * @return
+     * @throws Exception
+     */
+    public PutMethodResponseResult createMethodResponse(PutMethodResponseRequest putMethodResponseRequest) throws Exception
+    {
+        PutMethodResponseResult putMethodResponseResult = m_amazonApiGatewayClient.putMethodResponse(putMethodResponseRequest);
+        
+        if(putMethodResponseResult != null)
+        {
+            m_logger.info("Gateway API Resource Method Response (" + putMethodResponseRequest.getResourceId() + ") has been created");
+        }
+        else
+        {
+            throw new Exception("Error creating Gateway API Resource Method Response: " + putMethodResponseRequest.getResourceId());
+        }
+        
+        return putMethodResponseResult;
+    }
+    
+    /**
+     * 
+     * @param putIntegrationRequest
+     * @return
+     * @throws Exception
+     */
+    public PutIntegrationResult createIntegration(PutIntegrationRequest putIntegrationRequest) throws Exception
+    {
+        PutIntegrationResult putIntegrationResult = m_amazonApiGatewayClient.putIntegration(putIntegrationRequest);
+        
+        if(putIntegrationResult != null)
+        {
+            m_logger.info("Gateway API Resource Method Integration (" + putIntegrationRequest.getUri() + ") has been created");
+        }
+        else
+        {
+            throw new Exception("Error creating Gateway API Resource Method Integration: " + putIntegrationRequest.getUri());
+        }
+        
+        return putIntegrationResult;
+    }
+    
+    /**
+     * 
+     * @param putIntegrationResponseRequest
+     * @return
+     * @throws Exception
+     */
+    public PutIntegrationResponseResult createIntegrationResponse(PutIntegrationResponseRequest putIntegrationResponseRequest) throws Exception
+    {
+        PutIntegrationResponseResult putIntegrationResponseResult = m_amazonApiGatewayClient.putIntegrationResponse(putIntegrationResponseRequest);
+        
+        if(putIntegrationResponseResult != null)
+        {
+            m_logger.info("Gateway API Resource Method Integration Response (" + putIntegrationResponseResult.getStatusCode() + ") has been created");
+        }
+        else
+        {
+            throw new Exception("Error creating Gateway API Resource Method Integration Response: " + putIntegrationResponseRequest.getStatusCode());
+        }
+        
+        return putIntegrationResponseResult;
+    }
+    
+    /**
+     * 
+     * @param createDeploymentRequest
+     * @return
+     * @throws Exception
+     */
+    public CreateDeploymentResult createDeployment(CreateDeploymentRequest createDeploymentRequest) throws Exception
+    {
+        CreateDeploymentResult createDeploymentResult = m_amazonApiGatewayClient.createDeployment(createDeploymentRequest);
+        
+        if(createDeploymentResult != null)
+        {
+            m_logger.info("Gateway API Deployment Stage (" + createDeploymentRequest.getStageName() + ") has been created");
+        }
+        else
+        {
+            throw new Exception("Error creating Gateway API Deployment Stage: " + createDeploymentRequest.getStageName());
+        }
+        
+        return createDeploymentResult;
     }
 }
