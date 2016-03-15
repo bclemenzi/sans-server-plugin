@@ -37,11 +37,13 @@ Available Annotations in the SDK
   * Used to identify class files used for Java-based Lambda functions
   * @AwsLambda(name="ViewUser", desc="Function to view a given user record", handlerMethod="handleRequest")
   * @AwsLambda(name="ViewUser", desc="Function to view a given user record", handlerMethod="handleRequest", memorySize="512", timeout="60")
+  * Example:  https://github.com/bclemenzi/sans-server/blob/master/src/main/java/com/nfbsoftware/sansserver/user/lambda/CreateUser.java
   
  * @AwsLambdaWithGateway
   * Used to identify class files used for Java-based Lambda functions with an API Gateway
   * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", memorySize="512", timeout="60", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
+  * Example: https://github.com/bclemenzi/sans-server/blob/master/src/main/java/com/nfbsoftware/sansserver/user/lambda/ViewUser.java
   
 Getting started with the Maven Plugin
 ---------------
