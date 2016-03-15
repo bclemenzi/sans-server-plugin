@@ -23,6 +23,10 @@ import com.amazonaws.services.apigateway.model.CreateDeploymentRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceResult;
 import com.amazonaws.services.apigateway.model.CreateRestApiRequest;
+import com.amazonaws.services.apigateway.model.GetIntegrationRequest;
+import com.amazonaws.services.apigateway.model.GetIntegrationResult;
+import com.amazonaws.services.apigateway.model.GetMethodRequest;
+import com.amazonaws.services.apigateway.model.GetMethodResult;
 import com.amazonaws.services.apigateway.model.GetRestApiResult;
 import com.amazonaws.services.apigateway.model.IntegrationType;
 import com.amazonaws.services.apigateway.model.PutIntegrationRequest;
@@ -30,6 +34,9 @@ import com.amazonaws.services.apigateway.model.PutIntegrationResponseRequest;
 import com.amazonaws.services.apigateway.model.PutMethodRequest;
 import com.amazonaws.services.apigateway.model.PutMethodResponseRequest;
 import com.amazonaws.services.apigateway.model.Resource;
+import com.amazonaws.services.apigateway.model.UpdateIntegrationRequest;
+import com.amazonaws.services.apigateway.model.UpdateMethodRequest;
+import com.amazonaws.services.apigateway.model.UpdateResourceRequest;
 import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
@@ -267,7 +274,9 @@ public class LambdaConfiguration extends AbstractMojo
                 if(resourceObject != null)
                 {
                     // Update the existing api
-                    m_logger.info("Resource (" + awsLambdaWithGatewayAnnotation.resourceName() + ") Found: " + resourceObject.getId());
+                    m_logger.info("Resource (" + awsLambdaWithGatewayAnnotation.resourceName() + ") Found, no updates will be made: " + resourceObject.getId());
+                    
+                    // TODO Add code to update the various method/integration objects for the resource.
                 }
                 else
                 {

@@ -27,7 +27,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3</version>
 		</dependency>
 	</dependencies>
 ```
@@ -44,7 +44,7 @@ Available Annotations in the SDK
   * Used to identify class files used for Java-based Lambda functions with an API Gateway
   * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", memorySize="512", timeout="60", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
-  * Example: https://github.com/bclemenzi/sans-server/blob/master/src/main/java/com/nfbsoftware/sansserver/user/lambda/ViewUser.java
+  * Example: https://github.com/bclemenzi/sans-server/blob/master/src/main/java/com/nfbsoftware/sansserver/user/lambda/AuthenticateUser.java
   
 Getting started with the Maven Plugin
 ---------------
@@ -59,7 +59,7 @@ Including the Maven plugin in your project by adding the following configuration
 			<plugin>
                 <groupId>com.nfbsoftware</groupId>
 				<artifactId>sans-server-plugin</artifactId>
-				<version>1.0.2</version>
+				<version>1.0.3</version>
             	<executions>
                 	<execution>
                 		<id>first-execution</id>
@@ -196,6 +196,7 @@ The SansServer-Plugin (SDK/Maven) expects there to be build.properties file foun
  * aws.cognito.identityPoolId
   * The pool id for AWS Cognito instance
   * Amazon Cognito allows you to store user data for your mobile apps, such as user preferences, mobile login, and game state, in the Amazon Cognito sync store. You can then sync this data across a user’s devices to help make their experience consistent across their devices. Amazon Cognito can automatically send a push notification to a user’s devices when data in the sync store changes.
+  * When setting up Cognito, you will be creating two new IAM Roles in AWS.  A recommended Auth/Unauth Role Policy for a new IAM Role can be found under this project at /IAM/Roles/Cognito-Auth-Policy.json and /IAM/Roles/Cognito-Unauth-Policy.json.  Make sure to update the auto-generated Role policy files with these settings.
  * aws.cognito.providerName
  * aws.lambda.roleArn
   * The ARN created for executing Lambda functions

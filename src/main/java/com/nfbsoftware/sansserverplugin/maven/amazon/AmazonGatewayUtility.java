@@ -16,6 +16,10 @@ import com.amazonaws.services.apigateway.model.CreateResourceRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceResult;
 import com.amazonaws.services.apigateway.model.CreateRestApiRequest;
 import com.amazonaws.services.apigateway.model.CreateRestApiResult;
+import com.amazonaws.services.apigateway.model.GetIntegrationRequest;
+import com.amazonaws.services.apigateway.model.GetIntegrationResult;
+import com.amazonaws.services.apigateway.model.GetMethodRequest;
+import com.amazonaws.services.apigateway.model.GetMethodResult;
 import com.amazonaws.services.apigateway.model.GetResourceRequest;
 import com.amazonaws.services.apigateway.model.GetResourceResult;
 import com.amazonaws.services.apigateway.model.GetResourcesRequest;
@@ -35,6 +39,10 @@ import com.amazonaws.services.apigateway.model.PutMethodResponseResult;
 import com.amazonaws.services.apigateway.model.PutMethodResult;
 import com.amazonaws.services.apigateway.model.Resource;
 import com.amazonaws.services.apigateway.model.RestApi;
+import com.amazonaws.services.apigateway.model.UpdateIntegrationRequest;
+import com.amazonaws.services.apigateway.model.UpdateIntegrationResult;
+import com.amazonaws.services.apigateway.model.UpdateMethodRequest;
+import com.amazonaws.services.apigateway.model.UpdateMethodResult;
 import com.amazonaws.services.apigateway.model.UpdateResourceRequest;
 import com.amazonaws.services.apigateway.model.UpdateResourceResult;
 import com.amazonaws.services.apigateway.model.UpdateRestApiRequest;
@@ -351,6 +359,28 @@ public class AmazonGatewayUtility
     
     /**
      * 
+     * @param getMethodRequest
+     * @return
+     * @throws Exception
+     */
+    public GetMethodResult getMethod(GetMethodRequest getMethodRequest) throws Exception
+    {
+        GetMethodResult getMethodResult = null;
+        
+        try
+        {
+            getMethodResult = m_amazonApiGatewayClient.getMethod(getMethodRequest);
+        }
+        catch (Exception e)
+        {
+            m_logger.info("Gateway API Resource Method (" + getMethodRequest.getHttpMethod() + ") not found");
+        }
+        
+        return getMethodResult;
+    }
+    
+    /**
+     * 
      * @param putMethodRequest
      * @return
      * @throws Exception
@@ -369,6 +399,28 @@ public class AmazonGatewayUtility
         }
         
         return putMethodResult;
+    }
+    
+    /**
+     * 
+     * @param updateMethodRequest
+     * @return
+     * @throws Exception
+     */
+    public UpdateMethodResult updateMethod(UpdateMethodRequest updateMethodRequest) throws Exception
+    {
+        UpdateMethodResult updateMethodResult = m_amazonApiGatewayClient.updateMethod(updateMethodRequest);
+        
+        if(updateMethodResult != null)
+        {
+            m_logger.info("Gateway API Resource Method (" + updateMethodRequest.getHttpMethod() + ") has been updated");
+        }
+        else
+        {
+            throw new Exception("Error updating Gateway API Resource Method: " + updateMethodRequest.getHttpMethod());
+        }
+        
+        return updateMethodResult;
     }
     
     
@@ -396,6 +448,28 @@ public class AmazonGatewayUtility
     
     /**
      * 
+     * @param getIntegrationRequest
+     * @return
+     * @throws Exception
+     */
+    public GetIntegrationResult getIntegrationt(GetIntegrationRequest getIntegrationRequest) throws Exception
+    {
+        GetIntegrationResult getIntegrationResult = null;
+        
+        try
+        {
+            getIntegrationResult = m_amazonApiGatewayClient.getIntegration(getIntegrationRequest);
+        }
+        catch (Exception e)
+        {
+            m_logger.info("Gateway API Resource Method Integration Request(" + getIntegrationRequest.getHttpMethod() + ") not found");
+        }
+        
+        return getIntegrationResult;
+    }
+    
+    /**
+     * 
      * @param putIntegrationRequest
      * @return
      * @throws Exception
@@ -414,6 +488,28 @@ public class AmazonGatewayUtility
         }
         
         return putIntegrationResult;
+    }
+    
+    /**
+     * 
+     * @param updateIntegrationRequest
+     * @return
+     * @throws Exception
+     */
+    public UpdateIntegrationResult updateIntegration(UpdateIntegrationRequest updateIntegrationRequest) throws Exception
+    {
+        UpdateIntegrationResult updateIntegrationResult = m_amazonApiGatewayClient.updateIntegration(updateIntegrationRequest);
+        
+        if(updateIntegrationResult != null)
+        {
+            m_logger.info("Gateway API Resource Method Integration (" + updateIntegrationRequest.getHttpMethod() + ") has been updated");
+        }
+        else
+        {
+            throw new Exception("Error updating Gateway API Resource Method Integration: " + updateIntegrationRequest.getHttpMethod());
+        }
+        
+        return updateIntegrationResult;
     }
     
     /**
