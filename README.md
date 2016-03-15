@@ -13,6 +13,7 @@ Features
    * AmazonSESManager
    * AmazonCognitoManager
    * AbstractDynamoDbDao
+  * Configuration schema to allow for the isolation of multiple deployments:  Multi-Engineer Development, QA, Production
   * Published on Maven Central Repository
   
 Getting started with the SDK
