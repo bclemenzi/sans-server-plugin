@@ -1,4 +1,6 @@
 # SansServer-Plugin
+
+[![Join the chat at https://gitter.im/bclemenzi/sans-server-plugin](https://badges.gitter.im/bclemenzi/sans-server-plugin.svg)](https://gitter.im/bclemenzi/sans-server-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 The SansServer-Plugin serves two purposes, one as a development SDK and the other as a Maven plugin to build, provision, and deploy microservice applications under Amazon Web Services.  To learn more about web applications built using microservice infrastructures, please take a look at the SansServer project at https://github.com/bclemenzi/sans-server
 
 Features
