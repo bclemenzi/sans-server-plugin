@@ -196,14 +196,12 @@ The SansServer-Plugin (SDK/Maven) expects there to be build.properties file foun
  * aws.cognito.providerName
  * aws.lambda.roleArn
   * The ARN created for executing Lambda functions
-  * A recommended Role Policy for a new IAM Role can be found at /IAM/Roles/Lambda-Basic-Execution-Policy.json
+  * A recommended Role Policy for a new IAM Role can be found under this project at /IAM/Roles/Lambda-Basic-Execution-Policy.json
  * aws.s3.bucketName
   * The name of your projects S3 bucket.  If this bucket doesn't exist, the build process will create it for you.
   * The S3 bucket will be used for deployment artifacts and static web files used in the UI side of the SansServer framework 
  * aws.s3.deploymentFolder
   * The name of the S3 bucket folder used to upload the Lambda deployment JAR
- * aws.s3.staticResourcesFolder
-  * The name of the S3 bucket folder used to host static web resources for our web application.
  * aws.ses.replyEmailAddress
   * The email address to use as your "from" address when sending email through the service
 
