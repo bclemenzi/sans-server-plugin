@@ -19,6 +19,12 @@ Features
   * Configuration schema to allow for the isolation of multiple deployments:  Multi-Engineer Development, QA, Production
   * Published on Maven Central Repository
   
+Questions or Comments
+--------
+Join the conversation on Gitter by clicking on the badge below:
+
+[![Join the chat at https://gitter.im/bclemenzi/sans-server-plugin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/bclemenzi/sans-server-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+  
 Getting started with the SDK
 ---------------
 To use the features provided by the SDK, include the following dependency to your project's pom.xml
