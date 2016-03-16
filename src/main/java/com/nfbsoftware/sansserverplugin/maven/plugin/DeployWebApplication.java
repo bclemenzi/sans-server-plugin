@@ -208,6 +208,7 @@ public class DeployWebApplication extends AbstractMojo
             defaultJavascript.append("*/\n");
             
             String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
+            String environmentSiteUrl = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_SITE_URL));
             String idenityPoolId = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_COGNITO_IDENTITY_POOL_ID));
             String regionName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION));
             
@@ -217,6 +218,7 @@ public class DeployWebApplication extends AbstractMojo
             defaultJavascript.append("var globalAppConfig = new function()\n");
             defaultJavascript.append("{\n");
             defaultJavascript.append("  this.environmentPrefix = '" + environmentPrefix + "_';\n");
+            defaultJavascript.append("  this.environmentSiteUrl = '" + environmentSiteUrl + "';\n");
             defaultJavascript.append("  this.region = '" + regionName + "';\n");
             defaultJavascript.append("  this.identityPoolId = '" + idenityPoolId + "';\n");
             defaultJavascript.append("  this.baseServiceUrl = '" + invokeUrl + "';\n");

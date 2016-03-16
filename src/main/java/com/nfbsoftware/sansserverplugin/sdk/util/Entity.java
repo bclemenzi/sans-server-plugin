@@ -15,6 +15,7 @@ public class Entity
     {
         public static final String ENVIRONEMNT_PREFIX                   = "environment.namePrefix";
         public static final String ENVIRONEMNT_STAGE                    = "environment.stage";
+        public static final String ENVIRONEMNT_SITE_URL                 = "environment.siteUrl";
         
         public static final String AWS_REGION                           = "aws.region";
         public static final String AWS_ACCOUNT_ID                       = "aws.accountId";

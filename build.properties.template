@@ -5,6 +5,8 @@
 ##      ie.  environment.namePrefix=bclemenzi
 ##############################################################################################################
 environment.namePrefix=xxxxxxxxx
+environment.stage=xxxxxxx
+environment.siteUrl=myapp.mydomain.com
 
 ##############################################################################################################
 # AWS API Configuration
