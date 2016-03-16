@@ -303,15 +303,6 @@ public class LambdaConfiguration extends AbstractMojo
                         putMethodRequest.setAuthorizationType(awsLambdaWithGatewayAnnotation.authorization().name());
                         putMethodRequest.setHttpMethod(awsLambdaWithGatewayAnnotation.method().name());
                         
-                        if(awsLambdaWithGatewayAnnotation.enableCORS())
-                        {
-                            m_logger.info("Enable CORS for our method request"); 
-                            putMethodRequest.putCustomRequestHeader("Access-Control-Allow-Origin", "*");
-                            putMethodRequest.putCustomRequestHeader("Access-Control-Max-Age", "3600");
-                            putMethodRequest.putCustomRequestHeader("Access-Control-Allow-Methods", awsLambdaWithGatewayAnnotation.authorization().name() + ",OPTIONS");
-                            putMethodRequest.putCustomRequestHeader("Access-Control-Allow-Headers", "Content-Type,X-Amz-Date,Authorization,X-Api-Key");
-                        }
-                        
                         m_awsGatewayClient.createMethod(putMethodRequest);
                         
                         m_logger.info("Create our integration"); 
@@ -341,10 +332,12 @@ public class LambdaConfiguration extends AbstractMojo
                         if(awsLambdaWithGatewayAnnotation.enableCORS())
                         {
                             m_logger.info("Enable CORS for our method response"); 
-                            putMethodResponseRequest.putCustomRequestHeader("Access-Control-Allow-Origin", "*");
-                            putMethodResponseRequest.putCustomRequestHeader("Access-Control-Max-Age", "3600");
-                            putMethodResponseRequest.putCustomRequestHeader("Access-Control-Allow-Methods", awsLambdaWithGatewayAnnotation.authorization().name() + ",OPTIONS");
-                            putMethodResponseRequest.putCustomRequestHeader("Access-Control-Allow-Headers", "Content-Type,X-Amz-Date,Authorization,X-Api-Key");
+                            Map<String,Boolean> methodResponseParameters = new HashMap<String,Boolean>();
+                            methodResponseParameters.put("method.response.header.Access-Control-Allow-Methods", new Boolean("true"));
+                            methodResponseParameters.put("method.response.header.Access-Control-Allow-Origin", new Boolean("true"));
+                            methodResponseParameters.put("method.response.header.Access-Control-Allow-Headers", new Boolean("true"));
+                            
+                            putMethodResponseRequest.setResponseParameters(methodResponseParameters);
                         }
                         
                         m_awsGatewayClient.createMethodResponse(putMethodResponseRequest);
@@ -355,7 +348,17 @@ public class LambdaConfiguration extends AbstractMojo
                         putIntegrationResponseRequest.setResourceId(createResourceResult.getId());
                         putIntegrationResponseRequest.setHttpMethod(awsLambdaWithGatewayAnnotation.method().name());
                         putIntegrationResponseRequest.setStatusCode("200");
-                        //putIntegrationResponseRequest.setSelectionPattern(".*");
+                        
+                        if(awsLambdaWithGatewayAnnotation.enableCORS())
+                        {
+                            m_logger.info("Enable CORS for our integration response"); 
+                            Map<String,String> integrationResponseParameters = new HashMap<String,String>();
+                            integrationResponseParameters.put("method.response.header.Access-Control-Allow-Methods", "'*'");
+                            integrationResponseParameters.put("method.response.header.Access-Control-Allow-Origin", "'*'");
+                            integrationResponseParameters.put("method.response.header.Access-Control-Allow-Headers", "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'");
+                            
+                            putIntegrationResponseRequest.setResponseParameters(integrationResponseParameters);
+                        }
                         
                         Map<String, String> responseTemplates = new HashMap<String, String>();
                         responseTemplates.put("application/json", "");
