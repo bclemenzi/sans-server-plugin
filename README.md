@@ -200,6 +200,8 @@ The SansServer-Plugin (SDK/Maven) expects there to be build.properties file foun
  * environment.namePrefix
   * The environment.namePrefix value is used to isolate multiple deployments.  For example, a production .vs. development deployment.
   * I recommend creating an environment name prefix to isolate multiple environments QA, PRODUCTION, or developer's name to isolate this environment in AWS
+ * environment.siteUrl
+  * The domain CNAME you have created as an alias to your S3 bucket defined in this file under aws.s3.bucketName
  * aws.region
   * This is the String value of Amazon's region that your deployment should be provisioned
  * aws.accountId
