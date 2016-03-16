@@ -53,6 +53,14 @@ Available Annotations in the SDK
   * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   * Example: https://github.com/bclemenzi/sans-server/blob/master/src/main/java/com/nfbsoftware/sansserver/user/lambda/AuthenticateUser.java
   
+Available AWS utility classes in the SDK
+---------------
+ * AmazonCognitoManager
+ * AmazonS3Manager
+ * AmazonSESManager
+ * AbstractDynamoDbDao
+ * BaseLambdaHandler
+  
 Getting started with the Maven Plugin
 ---------------
 Including the Maven plugin in your project by adding the following configuration to your project's pom.xml
@@ -191,11 +199,11 @@ The SansServer-Plugin (SDK/Maven) expects there to be build.properties file foun
 
  * environment.namePrefix
   * The environment.namePrefix value is used to isolate multiple deployments.  For example, a production .vs. development deployment.
-  * I recommend creating an environment name prefix to isolate multiple environments QA, PRODUCTION, or developer's name to isolate this bucket in AWS
+  * I recommend creating an environment name prefix to isolate multiple environments QA, PRODUCTION, or developer's name to isolate this environment in AWS
  * aws.region
   * This is the String value of Amazon's region that your deployment should be provisioned
  * aws.accountId
-  * Your AWS account ID
+  * Your AWS account ID.  This can be found on the AWS Console's Support page.
  * aws.accessKey
   * Your user's AWS access key.
  * aws.secretKey
