@@ -106,15 +106,6 @@ public class AmazonS3Utility
                 bucketPolicy.append("            },");
                 bucketPolicy.append("            \"Action\": \"s3:GetObject\",");
                 bucketPolicy.append("            \"Resource\": \"arn:aws:s3:::" + m_bucketName + "/*\"");
-                bucketPolicy.append("        },");
-                bucketPolicy.append("        {");
-                bucketPolicy.append("            \"Sid\": \"Stmt1413511125555\",");
-                bucketPolicy.append("            \"Effect\": \"Deny\",");
-                bucketPolicy.append("            \"Principal\": {");
-                bucketPolicy.append("                \"AWS\": \"*\"");
-                bucketPolicy.append("            },");
-                bucketPolicy.append("            \"Action\": \"s3:GetObject\",");
-                bucketPolicy.append("            \"Resource\": \"arn:aws:s3:::" + m_bucketName + "/" + m_deploymentFolder + "/*\"");
                 bucketPolicy.append("        }");
                 bucketPolicy.append("    ]");
                 bucketPolicy.append("}");
