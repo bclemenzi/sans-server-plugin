@@ -1,5 +1,6 @@
 package com.nfbsoftware.sansserverplugin.maven.amazon;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.plugin.logging.Log;
@@ -13,10 +14,12 @@ import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.AddPermissionResult;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
+import com.amazonaws.services.lambda.model.DeleteFunctionRequest;
 import com.amazonaws.services.lambda.model.FunctionCode;
 import com.amazonaws.services.lambda.model.FunctionConfiguration;
 import com.amazonaws.services.lambda.model.GetFunctionRequest;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
+import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeRequest;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionConfigurationRequest;
@@ -91,6 +94,18 @@ public class AmazonLambdaUtility
             return false;
         }
     }
+    
+    /**
+     * 
+     * @param functionName
+     */
+    public void deleteFunction(String functionName) 
+    {
+        DeleteFunctionRequest deleteFunctionRequest = new DeleteFunctionRequest();
+        deleteFunctionRequest.setFunctionName(functionName);
+
+        m_amazonLambdaClient.deleteFunction(deleteFunctionRequest);
+    }
 
     /**
      * 
@@ -114,6 +129,31 @@ public class AmazonLambdaUtility
         }
         
         return getFunctionResult;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public List<FunctionConfiguration> getFunctions() 
+    {
+        List<FunctionConfiguration> functionList = null;
+        
+        try
+        {
+            ListFunctionsResult listFunctionsResult = m_amazonLambdaClient.listFunctions();
+            
+            if(listFunctionsResult != null)
+            {
+                functionList = listFunctionsResult.getFunctions();
+            }
+        }
+        catch (Exception e)
+        {
+            // Do nothing
+        }
+        
+        return functionList;
     }
     
     /**

@@ -16,6 +16,7 @@ import com.amazonaws.services.apigateway.model.CreateResourceRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceResult;
 import com.amazonaws.services.apigateway.model.CreateRestApiRequest;
 import com.amazonaws.services.apigateway.model.CreateRestApiResult;
+import com.amazonaws.services.apigateway.model.DeleteResourceRequest;
 import com.amazonaws.services.apigateway.model.GetIntegrationRequest;
 import com.amazonaws.services.apigateway.model.GetIntegrationResult;
 import com.amazonaws.services.apigateway.model.GetMethodRequest;
@@ -288,6 +289,35 @@ public class AmazonGatewayUtility
     /**
      * 
      * @param restApiId
+     * @return
+     */
+    public List<Resource> getResources(String restApiId)
+    {
+        GetResourcesRequest getResoursesRequest = new GetResourcesRequest();
+        getResoursesRequest.setRestApiId(restApiId);
+        
+        GetResourcesResult result = m_amazonApiGatewayClient.getResources(getResoursesRequest);
+        
+        return result.getItems();
+    }
+    
+    /**
+     * 
+     * @param restApiId
+     * @param resourceId
+     */
+    public void deleteResource(String restApiId, String resourceId)
+    {
+        DeleteResourceRequest deleteResourceRequest = new DeleteResourceRequest();
+        deleteResourceRequest.setRestApiId(restApiId);
+        deleteResourceRequest.setResourceId(resourceId);
+        
+        m_amazonApiGatewayClient.deleteResource(deleteResourceRequest);
+    }
+    
+    /**
+     * 
+     * @param restApiId
      * @param pathPart
      * @return
      * @throws Exception
@@ -295,13 +325,8 @@ public class AmazonGatewayUtility
     public Resource getResourceByPathPart(String restApiId, String pathPart) throws Exception
     {
         Resource resourceObject = null;
-        
-        GetResourcesRequest getResoursesRequest = new GetResourcesRequest();
-        getResoursesRequest.setRestApiId(restApiId);
-        
-        GetResourcesResult result = m_amazonApiGatewayClient.getResources(getResoursesRequest);
-        
-        List<Resource> resources = result.getItems();
+
+        List<Resource> resources = getResources(restApiId);
         
         for(Resource resource : resources)
         {

@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Vector;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -39,7 +41,9 @@ import com.amazonaws.services.apigateway.model.UpdateMethodRequest;
 import com.amazonaws.services.apigateway.model.UpdateResourceRequest;
 import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
+import com.amazonaws.services.lambda.model.FunctionConfiguration;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
+import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionConfigurationRequest;
 import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonGatewayUtility;
 import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonLambdaUtility;
@@ -144,6 +148,9 @@ public class LambdaConfiguration extends AbstractMojo
                 m_logger.info("Configure SansServer Lambda functions");
                 configureLambdaFunctions(lambdaClassFiles);
                 
+                m_logger.info("Clean old old Lambda functions");
+                cleanUpOldLambdaFunctions(lambdaClassFiles);
+                
                 m_logger.info("Deleting Lambda JAR from S3: " + jarFileName);
                 m_amazonS3Utility.deleteFile(deploymentFolder, jarFileName);
             }
@@ -164,6 +171,92 @@ public class LambdaConfiguration extends AbstractMojo
     {
         String jarFileName = projectName + "-" + projectVersion + ".jar";
         return jarFileName;
+    }
+    
+    /**
+     * 
+     * @param lambdaClassFiles
+     * @throws Exception
+     */
+    private void cleanUpOldLambdaFunctions(List<String> lambdaClassFiles) throws Exception
+    {
+        Set<String> activeFunctionSet = new HashSet<String>();
+        Set<String> activeApiResourceSet = new HashSet<String>();
+        
+        String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
+        
+        // Create a generated function name so that we can isolate multiple deployments
+        String projectGatewayName = environmentPrefix + "_" + projectName;
+        
+        // Loop through our class files to collect the names of our active functions
+        for(String classFileName : lambdaClassFiles)
+        {  
+            // Get our class file from the loader
+            Class classObject = m_lambdaClassMap.get(classFileName);
+            
+            if(classObject.isAnnotationPresent(AwsLambda.class))
+            {
+                AwsLambda awsLambdaAnnotation = (AwsLambda)classObject.getAnnotation(AwsLambda.class);
+                
+                if(awsLambdaAnnotation != null)
+                {
+                    String generatedlambdaName = StringUtil.replaceSubstr(environmentPrefix + "_" + awsLambdaAnnotation.name(), " ", "");
+                    
+                    activeFunctionSet.add(generatedlambdaName);
+                }
+            }
+            if(classObject.isAnnotationPresent(AwsLambdaWithGateway.class))
+            {
+                AwsLambdaWithGateway awsLambdaWithGatewayAnnotation = (AwsLambdaWithGateway)classObject.getAnnotation(AwsLambdaWithGateway.class);
+                
+                if(awsLambdaWithGatewayAnnotation != null)
+                {
+                    String generatedlambdaName = StringUtil.replaceSubstr(environmentPrefix + "_" + awsLambdaWithGatewayAnnotation.name(), " ", "");
+                    
+                    activeFunctionSet.add(generatedlambdaName);
+                    activeApiResourceSet.add(awsLambdaWithGatewayAnnotation.resourceName());
+                }
+            }
+        }
+        
+        // Loop through the API resources to delete ones that are no longer needed
+        GetRestApiResult restApiResult = m_awsGatewayClient.getRestApiByName(projectGatewayName);
+        
+        if(restApiResult != null)
+        {
+            List<Resource> deployedResources = m_awsGatewayClient.getResources(restApiResult.getId());
+            
+            for(Resource resource : deployedResources)
+            {
+                if(!StringUtil.isNullOrEmpty(resource.getPathPart()))
+                {
+                    if(!activeApiResourceSet.contains(resource.getPathPart()))
+                    {
+                        m_logger.info("Deleting API Resource: " + resource.getId() + "  " + resource.getPathPart());
+                        m_awsGatewayClient.deleteResource(restApiResult.getId(), resource.getId());
+                    }
+                }
+            }
+        }
+        
+        // Loop through deployed functions to see which ones we should delete
+        List<FunctionConfiguration> functionConfigurations = m_awsLambdaClient.getFunctions();
+        
+        for(FunctionConfiguration functionConfiguration : functionConfigurations)
+        {
+            String functionName = functionConfiguration.getFunctionName();
+            
+            // Only delete functions with our env prefix
+            if(functionName.startsWith(environmentPrefix))
+            {
+                // Make sure this function isn't on our active deploy list
+                if(!activeFunctionSet.contains(functionName))
+                {
+                    m_logger.info("Deleting Lambda Function: " + functionName);
+                    m_awsLambdaClient.deleteFunction(functionName);
+                }
+            }
+        }
     }
     
     /**
