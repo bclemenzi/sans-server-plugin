@@ -187,7 +187,7 @@ public class DeployWebApplication extends AbstractMojo
             f.mkdirs();
         }
 
-        File touch = new File(f, projectName + "-config.js");
+        File touch = new File(f, "global-app-config.js");
         
         FileWriter w = null;
         try
@@ -214,7 +214,7 @@ public class DeployWebApplication extends AbstractMojo
             String projectGatewayName = environmentPrefix + "_" + projectName;
             String invokeUrl = StringUtil.emptyIfNull(m_awsGatewayClient.getRestApiInvokeUrl(projectGatewayName));
             
-            defaultJavascript.append("var sansServerConfig = new function()\n");
+            defaultJavascript.append("var globalAppConfig = new function()\n");
             defaultJavascript.append("{\n");
             defaultJavascript.append("  this.environmentPrefix = '" + environmentPrefix + "_';\n");
             defaultJavascript.append("  this.region = '" + regionName + "';\n");
