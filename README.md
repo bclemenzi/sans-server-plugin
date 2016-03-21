@@ -1,7 +1,11 @@
-# SansServer-Plugin
-The SansServer-Plugin serves two purposes, one as a development SDK and the other as a Maven plugin to build, provision, and deploy microservice applications under Amazon Web Services.  To learn more about web applications built using microservice infrastructures, please take a look at the SansServer project at https://github.com/bclemenzi/sans-server
+SansServer Plugin/SDK
+==============
 
-Features
+The SansServer Plugin/SDK provides developers with a tool set to allow them to rapidly build and deploy scalable and highly available applications without the hassle of maintaining or paying for servers.  It leverages Amazon Web Services to allow development teams to go "serverless".  By “serverless”, we mean no explicit infrastructure required, as in: no servers, no deployments onto servers, no installed software of any kind. We’ll use only managed cloud services and a laptop.
+
+To see an application built using this framework, please visit our SansServer project (https://github.com/bclemenzi/sans-server).
+
+Plugin/SDK Features
 --------
 
   * Custom Java Annotations for the installation and configuration of AWS artifacts
