@@ -57,6 +57,10 @@ Available Annotations in the SDK
   * @AwsLambdaWithGateway(name="AuthenticateUser", desc="Custom authentication service", handlerMethod="handleRequest", resourceName="Login", method=AwsLambdaWithGateway.MethodTypes.POST, authorization=AwsLambdaWithGateway.AuthorizationTypes.OPEN, keyRequired=false, enableCORS=true)
   * Example: https://github.com/bclemenzi/sans-server/blob/master/src/main/java/com/nfbsoftware/sansserver/user/lambda/AuthenticateUser.java
   
+* @AWSLambdaScheduled - COMING SOON
+ * Used to identify class files used for Java-based Lambda functions that execute on a scheduled basis.  These are great for those jobs that you need to run while humans are off living their lives. 
+ * @AwsLambdaScheduled(name="UserQueue", desc="A scheduled function to process a queue", handlerMethod="handleRequest", cronExpression="0 0 12 1/1 * ? *")
+  
 Available AWS utility classes in the SDK
 ---------------
  * AmazonCognitoManager
