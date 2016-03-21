@@ -59,7 +59,7 @@ Available Annotations in the SDK
   
 * @AWSLambdaScheduled - COMING SOON
  * Used to identify class files used for Java-based Lambda functions that execute on a scheduled basis.  These are great for those jobs that you need to run while humans are off living their lives. 
- * @AwsLambdaScheduled(name="UserQueue", desc="A scheduled function to process a queue", handlerMethod="handleRequest", cronExpression="0 0 12 1/1 * ? *")
+ * @AwsLambdaScheduled(name="WorkQueue", desc="A scheduled function to process a queue", handlerMethod="handleRequest", cronExpression="0 0 12 1/1 * ? *")
   
 Available AWS utility classes in the SDK
 ---------------
