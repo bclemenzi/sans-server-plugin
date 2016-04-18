@@ -110,7 +110,7 @@ public class DeployWebApplication extends AbstractMojo
             String contentName = StringUtil.replaceSubstr(assetFile.getAbsolutePath(), sourcePath + "/", "");
             
             // Make sure not to copy files that begin with "." as those are hidden files on the disk
-            if(!contentName.equalsIgnoreCase("/.") && !contentName.equalsIgnoreCase(".DS_Store"))
+            if(!contentName.contains("/.") && !contentName.contains(".DS_Store"))
             {
                 m_logger.info("Uploading assest: " + contentName);
                 m_amazonS3Utility.uploadFile(null, contentName, assetFile);
