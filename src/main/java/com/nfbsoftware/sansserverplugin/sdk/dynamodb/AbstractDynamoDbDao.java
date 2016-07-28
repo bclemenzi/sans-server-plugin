@@ -232,7 +232,7 @@ public abstract class AbstractDynamoDbDao
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public List<Object> scan(Class<?> clazz, int totalSegments, String columnName, String value) throws Exception
+    public List<Object> scan(Class<?> clazz, String columnName, String value) throws Exception
     {
         List<Object> scanResult = null;
         
@@ -253,7 +253,7 @@ public abstract class AbstractDynamoDbDao
                 .withExpressionAttributeValues(eav);
 
             // Get our scan results
-            scanResult = (List<Object>)dynamoDBMapper.parallelScan(clazz, scanExpression, totalSegments, finalConfiguration);
+            scanResult = (List<Object>)dynamoDBMapper.scan(clazz, scanExpression, finalConfiguration);
         }
         catch (AmazonServiceException ase)
         {

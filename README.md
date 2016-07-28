@@ -38,7 +38,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.11</version>
+			<version>1.0.12</version>
 		</dependency>
 	</dependencies>
 ```
