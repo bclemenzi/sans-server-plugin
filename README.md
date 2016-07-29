@@ -10,7 +10,7 @@ Plugin/SDK Features
 
   * Custom Java Annotations for the installation and configuration of AWS artifacts
    * Lambda Functions (Java8)
-   * AWS Gateway APIs used for RESTful access to your Lambda functions
+   * AWS Gateway APIs used for RESTful access to your Lambda functions with public deployment
    * AWS S3 Storage
   * SansServer SDK includes a number of Java wrapper classes to make working with the AWS SDK easier.
    * AmazonS3Manager
@@ -38,7 +38,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.12</version>
+			<version>1.0.15</version>
 		</dependency>
 	</dependencies>
 ```

@@ -25,6 +25,7 @@ import com.amazonaws.services.apigateway.model.CreateDeploymentRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceResult;
 import com.amazonaws.services.apigateway.model.CreateRestApiRequest;
+import com.amazonaws.services.apigateway.model.Deployment;
 import com.amazonaws.services.apigateway.model.GetIntegrationRequest;
 import com.amazonaws.services.apigateway.model.GetIntegrationResult;
 import com.amazonaws.services.apigateway.model.GetMethodRequest;
@@ -299,6 +300,9 @@ public class LambdaConfiguration extends AbstractMojo
                     
                     // TODO finish the API integration because at the time of this writing there was no support for Lambda configurations in the AWS SDK
                     deployGatewayAPIforLambdaFunction(classFileName, awsLambdaWithGatewayAnnotation.name(), awsLambdaWithGatewayAnnotation);
+                    
+                    // Deploy the API for public use
+                    deployAPIGateway();
                 }
             }
         }
@@ -332,6 +336,35 @@ public class LambdaConfiguration extends AbstractMojo
             m_awsGatewayClient.createRestApi(createRestApiRequest);
             
             m_hasGateway = true;
+        }
+    }
+    
+    /**
+     * 
+     * @throws Exception
+     */
+    private void deployAPIGateway() throws Exception
+    {
+        String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
+        String deploymentStage = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_STAGE));
+        
+        // Generate our environment-based gateway name
+        String projectGatewayName = environmentPrefix + "_" + projectName;
+        
+        GetRestApiResult restApiResult = m_awsGatewayClient.getRestApiByName(projectGatewayName);
+        
+        if(restApiResult != null)
+        {
+            m_logger.info("Deploying (" + restApiResult.getName() + ") API Gateway for public consumption: " + restApiResult.getId());
+            
+            CreateDeploymentRequest createDeploymentRequest = new CreateDeploymentRequest();
+            createDeploymentRequest.setRestApiId(restApiResult.getId());
+            createDeploymentRequest.setStageName(deploymentStage);
+            createDeploymentRequest.setStageDescription(deploymentStage + " deployment stage created by the SansServerPlugin");
+            
+            m_awsGatewayClient.createDeployment(createDeploymentRequest);
+            
+            m_logger.info("Gateway API (" + restApiResult.getName() + ") has been deployed: " + restApiResult.getId());
         }
     }
     
