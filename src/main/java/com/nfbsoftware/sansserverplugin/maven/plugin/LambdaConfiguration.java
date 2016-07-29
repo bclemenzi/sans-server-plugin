@@ -306,11 +306,15 @@ public class LambdaConfiguration extends AbstractMojo
                     
                     // TODO finish the API integration because at the time of this writing there was no support for Lambda configurations in the AWS SDK
                     deployGatewayAPIforLambdaFunction(classFileName, awsLambdaWithGatewayAnnotation.name(), awsLambdaWithGatewayAnnotation);
-                    
-                    // Deploy the API for public use
-                    deployAPIGateway(true);
                 }
             }
+        }
+        
+        // Deploy the APIs for public use if we configured a gateway
+        if(m_hasGateway)
+        {
+            
+            pubishAPIGateway(true);
         }
     }
     
@@ -352,7 +356,7 @@ public class LambdaConfiguration extends AbstractMojo
      * 
      * @throws Exception
      */
-    private void deployAPIGateway(boolean allowRetry) throws Exception
+    private void pubishAPIGateway(boolean allowRetry) throws Exception
     {
         // Sleep for a second as to not overload our AWS throttling limits
         Thread.sleep(1000);
@@ -389,7 +393,7 @@ public class LambdaConfiguration extends AbstractMojo
                     // Sleep for a second as to not overload our AWS throttling limits
                     Thread.sleep(2000);
                     
-                    deployAPIGateway(false);
+                    pubishAPIGateway(false);
                 }
                 else
                 {
@@ -455,6 +459,7 @@ public class LambdaConfiguration extends AbstractMojo
                     
                     if(createResourceResult != null)
                     {
+                        Thread.sleep(200);
                         m_logger.info("Create our method with type: " + awsLambdaWithGatewayAnnotation.method().name() + "  authorization: " + awsLambdaWithGatewayAnnotation.authorization().name()); 
                         PutMethodRequest putMethodRequest = new PutMethodRequest();
                         putMethodRequest.setRestApiId(getRestApiResult.getId());
@@ -465,6 +470,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createMethod(putMethodRequest);
                         
+                        Thread.sleep(200);
                         m_logger.info("Create our integration"); 
                         PutIntegrationRequest putIntegrationRequest = new PutIntegrationRequest();
                         putIntegrationRequest.setRestApiId(getRestApiResult.getId());
@@ -478,6 +484,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createIntegration(putIntegrationRequest);
                         
+                        Thread.sleep(200);
                         m_logger.info("Create our method response"); 
                         PutMethodResponseRequest putMethodResponseRequest = new PutMethodResponseRequest();
                         putMethodResponseRequest.setRestApiId(getRestApiResult.getId());
@@ -502,6 +509,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createMethodResponse(putMethodResponseRequest);
                         
+                        Thread.sleep(200);
                         m_logger.info("Create our integration response"); 
                         PutIntegrationResponseRequest putIntegrationResponseRequest = new PutIntegrationResponseRequest();
                         putIntegrationResponseRequest.setRestApiId(getRestApiResult.getId());
@@ -526,6 +534,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createIntegrationResponse(putIntegrationResponseRequest);
                         
+                        Thread.sleep(200);
                         m_logger.info("Create our api deployment"); 
                         CreateDeploymentRequest createDeploymentRequest = new CreateDeploymentRequest();
                         createDeploymentRequest.setRestApiId(getRestApiResult.getId());
@@ -534,6 +543,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createDeployment(createDeploymentRequest);
                         
+                        Thread.sleep(200);
                         m_logger.info("Create our function permissions for testing"); 
                         AddPermissionRequest testinAddPermissionRequest = new AddPermissionRequest();
                         testinAddPermissionRequest.setFunctionName(generatedlambdaName);
@@ -548,6 +558,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsLambdaClient.addPermission(testinAddPermissionRequest);
                         
+                        Thread.sleep(200);
                         m_logger.info("Create our function permissions for the deployment"); 
                         AddPermissionRequest deployAddPermissionRequest = new AddPermissionRequest();
                         deployAddPermissionRequest.setFunctionName(generatedlambdaName);
