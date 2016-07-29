@@ -233,6 +233,9 @@ public class LambdaConfiguration extends AbstractMojo
                 {
                     if(!activeApiResourceSet.contains(resource.getPathPart()))
                     {
+                        // Sleep for a 10th of a second as to not overload our AWS throttling limits
+                        Thread.sleep(100);
+                        
                         m_logger.info("Deleting API Resource: " + resource.getId() + "  " + resource.getPathPart());
                         m_awsGatewayClient.deleteResource(restApiResult.getId(), resource.getId());
                     }
@@ -253,6 +256,9 @@ public class LambdaConfiguration extends AbstractMojo
                 // Make sure this function isn't on our active deploy list
                 if(!activeFunctionSet.contains(functionName))
                 {
+                    // Sleep for a 10th of a second as to not overload our AWS throttling limits
+                    Thread.sleep(100);
+                    
                     m_logger.info("Deleting Lambda Function: " + functionName);
                     m_awsLambdaClient.deleteFunction(functionName);
                 }
@@ -302,7 +308,7 @@ public class LambdaConfiguration extends AbstractMojo
                     deployGatewayAPIforLambdaFunction(classFileName, awsLambdaWithGatewayAnnotation.name(), awsLambdaWithGatewayAnnotation);
                     
                     // Deploy the API for public use
-                    deployAPIGateway();
+                    deployAPIGateway(true);
                 }
             }
         }
@@ -314,6 +320,9 @@ public class LambdaConfiguration extends AbstractMojo
      */
     private void createAPIGateway() throws Exception
     {
+        // Sleep for a second as to not overload our AWS throttling limits
+        Thread.sleep(1000);
+        
         String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         
         // Generate our environment-based gateway name
@@ -343,8 +352,11 @@ public class LambdaConfiguration extends AbstractMojo
      * 
      * @throws Exception
      */
-    private void deployAPIGateway() throws Exception
+    private void deployAPIGateway(boolean allowRetry) throws Exception
     {
+        // Sleep for a second as to not overload our AWS throttling limits
+        Thread.sleep(1000);
+        
         String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         String deploymentStage = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_STAGE));
         
@@ -355,16 +367,35 @@ public class LambdaConfiguration extends AbstractMojo
         
         if(restApiResult != null)
         {
-            m_logger.info("Deploying (" + restApiResult.getName() + ") API Gateway for public consumption: " + restApiResult.getId());
-            
-            CreateDeploymentRequest createDeploymentRequest = new CreateDeploymentRequest();
-            createDeploymentRequest.setRestApiId(restApiResult.getId());
-            createDeploymentRequest.setStageName(deploymentStage);
-            createDeploymentRequest.setStageDescription(deploymentStage + " deployment stage created by the SansServerPlugin");
-            
-            m_awsGatewayClient.createDeployment(createDeploymentRequest);
-            
-            m_logger.info("Gateway API (" + restApiResult.getName() + ") has been deployed: " + restApiResult.getId());
+            try
+            {
+                m_logger.info("Deploying (" + restApiResult.getName() + ") API Gateway for public consumption: " + restApiResult.getId());
+                
+                CreateDeploymentRequest createDeploymentRequest = new CreateDeploymentRequest();
+                createDeploymentRequest.setRestApiId(restApiResult.getId());
+                createDeploymentRequest.setStageName(deploymentStage);
+                createDeploymentRequest.setStageDescription(deploymentStage + " deployment stage created by the SansServerPlugin");
+                
+                m_awsGatewayClient.createDeployment(createDeploymentRequest);
+                
+                m_logger.info("Gateway API (" + restApiResult.getName() + ") has been deployed: " + restApiResult.getId());
+            }
+            catch (Exception e)
+            {
+                if(allowRetry)
+                {
+                    m_logger.error("Failed to deploy Gateway API (" + restApiResult.getName() + ") retrying in 2 seconds: " + restApiResult.getId());
+                    
+                    // Sleep for a second as to not overload our AWS throttling limits
+                    Thread.sleep(2000);
+                    
+                    deployAPIGateway(false);
+                }
+                else
+                {
+                    m_logger.error("Failed to deploy Gateway API (" + restApiResult.getName() + ") for a second time: " + restApiResult.getId());
+                }
+            }
         }
     }
     
@@ -374,6 +405,9 @@ public class LambdaConfiguration extends AbstractMojo
      */
     private void deployGatewayAPIforLambdaFunction(String classFileName, String name, AwsLambdaWithGateway awsLambdaWithGatewayAnnotation) throws Exception
     {
+        // Sleep for a 1/2 a second as to not overload our AWS throttling limits
+        Thread.sleep(500);
+        
         String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         String regionName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION));
         String accountId = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_ACCOUNT_ID));
@@ -554,6 +588,9 @@ public class LambdaConfiguration extends AbstractMojo
      */
     private void deployLambdaFunction(String classFileName, String name, String description, String handlerMethod, String memorySize, String timeout) throws Exception
     {
+        // Sleep for a 1/2 a second as to not overload our AWS throttling limits
+        Thread.sleep(500);
+        
         String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         String lambdaRoleArn = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_LAMBDA_ROLE_ARN));
         
