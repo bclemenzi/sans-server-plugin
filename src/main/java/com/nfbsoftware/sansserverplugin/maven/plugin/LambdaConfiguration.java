@@ -459,7 +459,7 @@ public class LambdaConfiguration extends AbstractMojo
                     
                     if(createResourceResult != null)
                     {
-                        Thread.sleep(200);
+                        Thread.sleep(1000);
                         m_logger.info("Create our method with type: " + awsLambdaWithGatewayAnnotation.method().name() + "  authorization: " + awsLambdaWithGatewayAnnotation.authorization().name()); 
                         PutMethodRequest putMethodRequest = new PutMethodRequest();
                         putMethodRequest.setRestApiId(getRestApiResult.getId());
@@ -470,7 +470,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createMethod(putMethodRequest);
                         
-                        Thread.sleep(200);
+                        Thread.sleep(1000);
                         m_logger.info("Create our integration"); 
                         PutIntegrationRequest putIntegrationRequest = new PutIntegrationRequest();
                         putIntegrationRequest.setRestApiId(getRestApiResult.getId());
@@ -484,7 +484,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createIntegration(putIntegrationRequest);
                         
-                        Thread.sleep(200);
+                        Thread.sleep(1000);
                         m_logger.info("Create our method response"); 
                         PutMethodResponseRequest putMethodResponseRequest = new PutMethodResponseRequest();
                         putMethodResponseRequest.setRestApiId(getRestApiResult.getId());
@@ -509,7 +509,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createMethodResponse(putMethodResponseRequest);
                         
-                        Thread.sleep(200);
+                        Thread.sleep(1000);
                         m_logger.info("Create our integration response"); 
                         PutIntegrationResponseRequest putIntegrationResponseRequest = new PutIntegrationResponseRequest();
                         putIntegrationResponseRequest.setRestApiId(getRestApiResult.getId());
@@ -534,7 +534,9 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createIntegrationResponse(putIntegrationResponseRequest);
                         
-                        Thread.sleep(200);
+                        m_logger.info("Waiting for provisioning operation to complete before starting deployment........"); 
+                        Thread.sleep(5000);
+                        
                         m_logger.info("Create our api deployment"); 
                         CreateDeploymentRequest createDeploymentRequest = new CreateDeploymentRequest();
                         createDeploymentRequest.setRestApiId(getRestApiResult.getId());
@@ -543,7 +545,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsGatewayClient.createDeployment(createDeploymentRequest);
                         
-                        Thread.sleep(200);
+                        Thread.sleep(1000);
                         m_logger.info("Create our function permissions for testing"); 
                         AddPermissionRequest testinAddPermissionRequest = new AddPermissionRequest();
                         testinAddPermissionRequest.setFunctionName(generatedlambdaName);
@@ -558,7 +560,7 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsLambdaClient.addPermission(testinAddPermissionRequest);
                         
-                        Thread.sleep(200);
+                        Thread.sleep(1000);
                         m_logger.info("Create our function permissions for the deployment"); 
                         AddPermissionRequest deployAddPermissionRequest = new AddPermissionRequest();
                         deployAddPermissionRequest.setFunctionName(generatedlambdaName);
