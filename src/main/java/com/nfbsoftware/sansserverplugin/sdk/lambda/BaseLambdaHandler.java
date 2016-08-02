@@ -1,8 +1,10 @@
 package com.nfbsoftware.sansserverplugin.sdk.lambda;
 
 import java.io.InputStream;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -21,7 +23,12 @@ public class BaseLambdaHandler implements ILambdaFunction
     protected Object m_input;
     protected Context m_context;
     
-    protected LinkedHashMap<String, String> m_inputHashMap;
+    protected HashMap<String, String> m_requestHeaders;
+    protected HashMap<String, String> m_requestParams;
+    protected HashMap<String, String> m_requestQuery;
+    protected HashMap<String, String> m_requestBody;
+    
+    protected HashMap<String, Object> m_inputHashMap;
     
     protected Properties m_properties = new Properties();
     
@@ -86,9 +93,57 @@ public class BaseLambdaHandler implements ILambdaFunction
      */
     protected String getProperty(String propertyKey)
     {
-        String tmpPropertyValue = m_properties.getProperty(propertyKey);
+        String tmpValue = m_properties.getProperty(propertyKey);
         
-        return tmpPropertyValue;
+        return tmpValue;
+    }
+    
+    /**
+     * The getInputObject method can be used as a simple way to get our function's raw input event elements.
+     * 
+     * @param objectKey
+     * @return
+     */
+    protected Object getInputObject(String objectKey)
+    {
+        Object tmpObject = m_inputHashMap.get(objectKey);
+        
+        return tmpObject;
+    }
+    
+    /**
+     * The getHeader method can be used as a simple way to get our function's input header attributes.
+     * 
+     * @param headerKey
+     * @return
+     */
+    protected String getHeader(String headerKey)
+    {
+        String tmpValue = null;
+
+        if(m_requestBody != null)
+        {
+            tmpValue = m_requestHeaders.get(headerKey);
+        }
+        
+        return tmpValue;
+    }
+    
+    /**
+     * Returns all the element keys found in the request header
+     * 
+     * @return
+     */
+    protected Set<String> getHeaderKeySet()
+    {
+        Set<String> tmpValue = new HashSet<String>();
+
+        if(m_requestHeaders != null)
+        {
+            tmpValue = m_requestHeaders.keySet();
+        }
+        
+        return tmpValue;
     }
     
     /**
@@ -99,9 +154,101 @@ public class BaseLambdaHandler implements ILambdaFunction
      */
     protected String getParameter(String parameterKey)
     {
-        String tmpParameterValue = m_inputHashMap.get(parameterKey);
+        String tmpValue = null;
+
+        if(m_requestBody != null)
+        {
+            tmpValue = m_requestParams.get(parameterKey);
+        }
         
-        return tmpParameterValue;
+        return tmpValue;
+    }
+    
+    /**
+     * Returns all the element keys found in the request params
+     * 
+     * @return
+     */
+    protected Set<String> getParameterKeySet()
+    {
+        Set<String> tmpValue = new HashSet<String>();
+
+        if(m_requestParams != null)
+        {
+            tmpValue = m_requestParams.keySet();
+        }
+        
+        return tmpValue;
+    }
+    
+    /**
+     * The getQuery method can be used as a simple way to get our function's input query string parameters.
+     * 
+     * @param queryStringKey
+     * @return
+     */
+    protected String getQuery(String queryStringKey)
+    {
+        String tmpValue = null;
+
+        if(m_requestBody != null)
+        {
+            tmpValue = m_requestQuery.get(queryStringKey);
+        }
+        
+        return tmpValue;
+    }
+    
+    /**
+     * Returns all the element keys found in the request query string
+     * 
+     * @return
+     */
+    protected Set<String> getQueryKeySet()
+    {
+        Set<String> tmpValue = new HashSet<String>();
+
+        if(m_requestQuery != null)
+        {
+            tmpValue = m_requestQuery.keySet();
+        }
+        
+        return tmpValue;
+    }
+    
+    /**
+     * The getBody method can be used as a simple way to get our function's input body string parameters.
+     * 
+     * @param bodyKey
+     * @return
+     */
+    protected String getBody(String bodyKey)
+    {
+        String tmpValue = null;
+
+        if(m_requestBody != null)
+        {
+            tmpValue = m_requestBody.get(bodyKey);
+        }
+        
+        return tmpValue;
+    }
+    
+    /**
+     * Returns all the element keys found in the request body
+     * 
+     * @return
+     */
+    protected Set<String> getBodyKeySet()
+    {
+        Set<String> tmpValue = new HashSet<String>();
+
+        if(m_requestBody != null)
+        {
+            tmpValue = m_requestBody.keySet();
+        }
+        
+        return tmpValue;
     }
     
     /**
@@ -121,8 +268,13 @@ public class BaseLambdaHandler implements ILambdaFunction
         m_logger = m_context.getLogger();
         
         @SuppressWarnings("unchecked")
-        LinkedHashMap<String, String> inputHashMap = (LinkedHashMap<String, String>)input;
+        HashMap<String, Object> inputHashMap = (HashMap<String, Object>)input;
         m_inputHashMap = inputHashMap;
+        
+        m_requestHeaders = (HashMap<String, String>)m_inputHashMap.get("headers");
+        m_requestParams = (HashMap<String, String>)m_inputHashMap.get("params");
+        m_requestQuery = (HashMap<String, String>)m_inputHashMap.get("query");
+        m_requestBody = (HashMap<String, String>)m_inputHashMap.get("body");
 
         try
         {

@@ -234,7 +234,7 @@ public class LambdaConfiguration extends AbstractMojo
                     if(!activeApiResourceSet.contains(resource.getPathPart()))
                     {
                         // Sleep for a 10th of a second as to not overload our AWS throttling limits
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                         
                         m_logger.info("Deleting API Resource: " + resource.getId() + "  " + resource.getPathPart());
                         m_awsGatewayClient.deleteResource(restApiResult.getId(), resource.getId());
@@ -257,7 +257,7 @@ public class LambdaConfiguration extends AbstractMojo
                 if(!activeFunctionSet.contains(functionName))
                 {
                     // Sleep for a 10th of a second as to not overload our AWS throttling limits
-                    Thread.sleep(100);
+                    Thread.sleep(1000);
                     
                     m_logger.info("Deleting Lambda Function: " + functionName);
                     m_awsLambdaClient.deleteFunction(functionName);
@@ -410,7 +410,7 @@ public class LambdaConfiguration extends AbstractMojo
     private void deployGatewayAPIforLambdaFunction(String classFileName, String name, AwsLambdaWithGateway awsLambdaWithGatewayAnnotation) throws Exception
     {
         // Sleep for a 1/2 a second as to not overload our AWS throttling limits
-        Thread.sleep(500);
+        Thread.sleep(2000);
         
         String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         String regionName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION));
@@ -478,6 +478,10 @@ public class LambdaConfiguration extends AbstractMojo
                         putIntegrationRequest.setHttpMethod(awsLambdaWithGatewayAnnotation.method().name());
                         putIntegrationRequest.setType(IntegrationType.AWS);
                         putIntegrationRequest.setIntegrationHttpMethod(awsLambdaWithGatewayAnnotation.method().name());
+                        
+                        // When using the gateway api, pass through the body, headers, parameters, query string parameters to our lambda functions when the context-type is application/json
+                        putIntegrationRequest.setPassthroughBehavior("WHEN_NO_TEMPLATES");
+                        putIntegrationRequest.addRequestTemplatesEntry("application/json", "{\"body\":$input.json('$'),\"headers\":{ #foreach($header in $input.params().header.keySet()) \"$header\":\"$util.escapeJavaScript($input.params().header.get($header))\" #if($foreach.hasNext),#end #end }, \"method\":\"$context.httpMethod\", \"params\": { #foreach($param in $input.params().path.keySet()) \"$param\":\"$util.escapeJavaScript($input.params().path.get($param))\" #if($foreach.hasNext),#end #end }, \"query\": { #foreach($queryParam in $input.params().querystring.keySet()) \"$queryParam\":\"$util.escapeJavaScript($input.params().querystring.get($queryParam))\" #if($foreach.hasNext),#end #end } }");
                         
                         String lambdaUriArn = "arn:aws:apigateway:" + regionName + ":lambda:path/2015-03-31/functions/arn:aws:lambda:" + regionName + ":" + accountId + ":function:" + generatedlambdaName + "/invocations";
                         putIntegrationRequest.setUri(lambdaUriArn);
@@ -602,7 +606,7 @@ public class LambdaConfiguration extends AbstractMojo
     private void deployLambdaFunction(String classFileName, String name, String description, String handlerMethod, String memorySize, String timeout) throws Exception
     {
         // Sleep for a 1/2 a second as to not overload our AWS throttling limits
-        Thread.sleep(500);
+        Thread.sleep(2000);
         
         String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         String lambdaRoleArn = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_LAMBDA_ROLE_ARN));
