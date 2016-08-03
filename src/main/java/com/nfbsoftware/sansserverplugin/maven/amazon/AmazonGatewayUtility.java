@@ -1,5 +1,6 @@
 package com.nfbsoftware.sansserverplugin.maven.amazon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -10,13 +11,21 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.apigateway.AmazonApiGatewayClient;
+import com.amazonaws.services.apigateway.model.ApiKey;
+import com.amazonaws.services.apigateway.model.CreateApiKeyRequest;
+import com.amazonaws.services.apigateway.model.CreateApiKeyResult;
 import com.amazonaws.services.apigateway.model.CreateDeploymentRequest;
 import com.amazonaws.services.apigateway.model.CreateDeploymentResult;
 import com.amazonaws.services.apigateway.model.CreateResourceRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceResult;
 import com.amazonaws.services.apigateway.model.CreateRestApiRequest;
 import com.amazonaws.services.apigateway.model.CreateRestApiResult;
+import com.amazonaws.services.apigateway.model.DeleteApiKeyRequest;
 import com.amazonaws.services.apigateway.model.DeleteResourceRequest;
+import com.amazonaws.services.apigateway.model.GetApiKeyRequest;
+import com.amazonaws.services.apigateway.model.GetApiKeyResult;
+import com.amazonaws.services.apigateway.model.GetApiKeysRequest;
+import com.amazonaws.services.apigateway.model.GetApiKeysResult;
 import com.amazonaws.services.apigateway.model.GetIntegrationRequest;
 import com.amazonaws.services.apigateway.model.GetIntegrationResult;
 import com.amazonaws.services.apigateway.model.GetMethodRequest;
@@ -29,7 +38,6 @@ import com.amazonaws.services.apigateway.model.GetRestApiRequest;
 import com.amazonaws.services.apigateway.model.GetRestApiResult;
 import com.amazonaws.services.apigateway.model.GetRestApisRequest;
 import com.amazonaws.services.apigateway.model.GetRestApisResult;
-import com.amazonaws.services.apigateway.model.Method;
 import com.amazonaws.services.apigateway.model.PutIntegrationRequest;
 import com.amazonaws.services.apigateway.model.PutIntegrationResponseRequest;
 import com.amazonaws.services.apigateway.model.PutIntegrationResponseResult;
@@ -579,5 +587,130 @@ public class AmazonGatewayUtility
         }
         
         return createDeploymentResult;
+    }
+    
+    /**
+     * 
+     * @param getApiKeysRequest
+     * @return
+     * @throws Exception
+     */
+    public GetApiKeysResult getApiKeysResult(GetApiKeysRequest getApiKeysRequest) throws Exception
+    {
+        GetApiKeysResult getApiKeysResult = null;
+        
+        try
+        {
+            getApiKeysResult = m_amazonApiGatewayClient.getApiKeys(getApiKeysRequest);
+        }
+        catch (Exception e)
+        {
+            m_logger.info("Gateway API Keys not found");
+        }
+        
+        return getApiKeysResult;
+    }
+    
+    /**
+     * 
+     * @param apiKeyPrefix
+     * @return
+     * @throws Exception
+     */
+    public List<ApiKey> getApiKeysByPrefix(String apiKeyPrefix) throws Exception
+    {
+        List<ApiKey> apiKeys = new ArrayList<ApiKey>();
+        
+        try
+        {
+            GetApiKeysRequest getApiKeysRequest = new GetApiKeysRequest();
+            
+            GetApiKeysResult results = m_amazonApiGatewayClient.getApiKeys(getApiKeysRequest);
+            
+            if(results != null)
+            {
+                for(ApiKey apiKey : results.getItems())
+                {
+                    if(apiKey.getName().startsWith(apiKeyPrefix))
+                    {
+                        apiKeys.add(apiKey);
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            m_logger.info("Gateway API Keys not found");
+        }
+        
+        return apiKeys;
+    }
+    
+    /**
+     * 
+     * @param createApiKeyRequest
+     * @return
+     * @throws Exception
+     */
+    public CreateApiKeyResult createApiKey(CreateApiKeyRequest createApiKeyRequest) throws Exception
+    {
+        CreateApiKeyResult createApiKeyResult = null;
+        
+        try
+        {
+            createApiKeyResult = m_amazonApiGatewayClient.createApiKey(createApiKeyRequest);
+        }
+        catch (Exception e)
+        {
+            m_logger.info("Gateway API Key not created");
+        }
+        
+        return createApiKeyResult;
+    }
+    
+    /**
+     * 
+     * @param apiKey
+     * @return
+     * @throws Exception
+     */
+    public void deleteApiKey(String apiKey) throws Exception
+    {
+        try
+        {
+            DeleteApiKeyRequest deleteApiKeyRequest = new DeleteApiKeyRequest();
+            deleteApiKeyRequest.setApiKey(apiKey);
+            
+            m_amazonApiGatewayClient.deleteApiKey(deleteApiKeyRequest);
+        }
+        catch (Exception e)
+        {
+            m_logger.info("Gateway API Key not deleted");
+        }
+    }
+    
+    /**
+     * 
+     * @param apiKey
+     * @return
+     * @throws Exception
+     */
+    public GetApiKeyResult getApiKey(String apiKey) throws Exception
+    {
+        GetApiKeyResult getApiKeyResult = null;
+        
+        try
+        {
+            GetApiKeyRequest getApiKeyRequest = new GetApiKeyRequest();
+            getApiKeyRequest.setApiKey(apiKey);
+            
+            getApiKeyResult = m_amazonApiGatewayClient.getApiKey(getApiKeyRequest);
+        }
+        catch (Exception e)
+        {
+            m_logger.info("Gateway API Key not found");
+        }
+        
+        return getApiKeyResult;
     }
 }

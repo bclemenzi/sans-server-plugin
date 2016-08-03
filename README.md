@@ -16,6 +16,9 @@ Plugin/SDK Features
    * AmazonS3Manager
    * AmazonSESManager
    * AmazonCognitoManager
+   * AmazonS3Utility
+   * AmazonLambdaUtility
+   * AmazonGatewayUtility
    * AbstractDynamoDbDao
   * JUnit test harness for locally testing your Lambda functions before deployment
   * Configuration schema to allow for the isolation of multiple deployments:  Multi-Engineer Development, QA, Production
@@ -38,7 +41,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.27</version>
+			<version>1.0.28</version>
 		</dependency>
 	</dependencies>
 ```
