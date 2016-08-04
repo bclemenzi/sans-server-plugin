@@ -525,7 +525,7 @@ public class LambdaConfiguration extends AbstractMojo
                         {
                             m_logger.info("Enable CORS for our integration response"); 
                             Map<String,String> integrationResponseParameters = new HashMap<String,String>();
-                            integrationResponseParameters.put("method.response.header.Access-Control-Allow-Methods", "'*'");
+                            integrationResponseParameters.put("method.response.header.Access-Control-Allow-Methods", "'GET,POST,OPTIONS'");
                             integrationResponseParameters.put("method.response.header.Access-Control-Allow-Origin", "'*'");
                             integrationResponseParameters.put("method.response.header.Access-Control-Allow-Headers", "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'");
                             
