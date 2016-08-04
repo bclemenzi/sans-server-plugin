@@ -59,7 +59,7 @@ import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
  * Goal which configures and deploys our Lambda functions with API Gateway endpoints.
  * 
  * @goal deploy-lambda
- * @phase install
+ * @phase deploy
  */
 public class LambdaConfiguration extends AbstractMojo
 {

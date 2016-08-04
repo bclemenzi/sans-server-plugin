@@ -41,7 +41,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.28</version>
+			<version>1.0.29</version>
 		</dependency>
 	</dependencies>
 ```
@@ -85,7 +85,7 @@ Including the Maven plugin in your project by adding the following configuration
 			<plugin>
                 <groupId>com.nfbsoftware</groupId>
 				<artifactId>sans-server-plugin</artifactId>
-				<version>1.0.9</version>
+				<version>1.0.29</version>
             	<executions>
                 	<execution>
                 		<id>first-execution</id>
@@ -95,18 +95,18 @@ Including the Maven plugin in your project by adding the following configuration
                     	<phase>generate-resources</phase>
                 	</execution>
                 	<execution>
-                		<id>second-execution</id>
+                		<id>third-execution</id>
                     	<goals>
-                        	<goal>deploy-lambda</goal>
+                        	<goal>install-webapp</goal>
                     	</goals>
                     	<phase>install</phase>
                 	</execution>
                 	<execution>
-                		<id>third-execution</id>
+                		<id>second-execution</id>
                     	<goals>
-                        	<goal>deploy-webapp</goal>
+                        	<goal>deploy-lambda</goal>
                     	</goals>
-                    	<phase>install</phase>
+                    	<phase>deploy</phase>
                 	</execution>
             	</executions>
             </plugin>
@@ -134,8 +134,8 @@ If you are running your Maven builds from inside Eclipse, you may need to add th
                            				<versionRange>[1.0,)</versionRange>                
                          				<goals>
                          	  				<goal>build-properties</goal>
+                         	  				<goal>install-webapp</goal>
                          	  				<goal>deploy-lambda</goal>
-                         	  				<goal>deploy-webapp</goal>
                            				</goals>
                          			</pluginExecutionFilter>
                          			<action>
