@@ -22,8 +22,8 @@ import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
  * This goal will deploy out static webapp resources to S3 along with generating a $project.name-config.js in the /src/main/webapp/generated folder.  This file will contain some of the important 
  * properties needed by the user interface code.
  * 
- * @goal install-webapp
- * @phase install
+ * @goal deploy-webapp
+ * @phase deploy
  */
 public class DeployWebApplication extends AbstractMojo
 {
