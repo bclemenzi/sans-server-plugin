@@ -15,10 +15,8 @@ Plugin/SDK Features
   * SansServer SDK includes a number of Java wrapper classes to make working with the AWS SDK easier.
    * AmazonS3Manager
    * AmazonSESManager
+   * AmazonGatewayManager
    * AmazonCognitoManager
-   * AmazonS3Utility
-   * AmazonLambdaUtility
-   * AmazonGatewayUtility
    * AbstractDynamoDbDao
   * JUnit test harness for locally testing your Lambda functions before deployment
   * Configuration schema to allow for the isolation of multiple deployments:  Multi-Engineer Development, QA, Production
@@ -41,7 +39,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.38</version>
+			<version>1.0.40</version>
 		</dependency>
 	</dependencies>
 ```
@@ -85,7 +83,7 @@ Including the Maven plugin in your project by adding the following configuration
 			<plugin>
                 <groupId>com.nfbsoftware</groupId>
 				<artifactId>sans-server-plugin</artifactId>
-				<version>1.0.38</version>
+				<version>1.0.40</version>
             	<executions>
                 	<execution>
                 		<id>first-execution</id>
@@ -106,7 +104,7 @@ Including the Maven plugin in your project by adding the following configuration
                     	<goals>
                         	<goal>deploy-webapp</goal>
                     	</goals>
-                    	<phase>install</phase>
+                    	<phase>site-deploy</phase>
                 	</execution>
             	</executions>
             </plugin>
