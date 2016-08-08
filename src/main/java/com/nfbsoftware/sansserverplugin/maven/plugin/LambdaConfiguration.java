@@ -25,11 +25,6 @@ import com.amazonaws.services.apigateway.model.CreateDeploymentRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceRequest;
 import com.amazonaws.services.apigateway.model.CreateResourceResult;
 import com.amazonaws.services.apigateway.model.CreateRestApiRequest;
-import com.amazonaws.services.apigateway.model.Deployment;
-import com.amazonaws.services.apigateway.model.GetIntegrationRequest;
-import com.amazonaws.services.apigateway.model.GetIntegrationResult;
-import com.amazonaws.services.apigateway.model.GetMethodRequest;
-import com.amazonaws.services.apigateway.model.GetMethodResult;
 import com.amazonaws.services.apigateway.model.GetRestApiResult;
 import com.amazonaws.services.apigateway.model.IntegrationType;
 import com.amazonaws.services.apigateway.model.PutIntegrationRequest;
@@ -37,14 +32,10 @@ import com.amazonaws.services.apigateway.model.PutIntegrationResponseRequest;
 import com.amazonaws.services.apigateway.model.PutMethodRequest;
 import com.amazonaws.services.apigateway.model.PutMethodResponseRequest;
 import com.amazonaws.services.apigateway.model.Resource;
-import com.amazonaws.services.apigateway.model.UpdateIntegrationRequest;
-import com.amazonaws.services.apigateway.model.UpdateMethodRequest;
-import com.amazonaws.services.apigateway.model.UpdateResourceRequest;
 import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.FunctionConfiguration;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
-import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionConfigurationRequest;
 import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonGatewayUtility;
 import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonLambdaUtility;
@@ -504,9 +495,7 @@ public class LambdaConfiguration extends AbstractMojo
                         {
                             m_logger.info("Enable CORS for our method response"); 
                             Map<String,Boolean> methodResponseParameters = new HashMap<String,Boolean>();
-                            methodResponseParameters.put("method.response.header.Access-Control-Allow-Methods", new Boolean("true"));
                             methodResponseParameters.put("method.response.header.Access-Control-Allow-Origin", new Boolean("true"));
-                            methodResponseParameters.put("method.response.header.Access-Control-Allow-Headers", new Boolean("true"));
                             
                             putMethodResponseRequest.setResponseParameters(methodResponseParameters);
                         }
@@ -525,9 +514,7 @@ public class LambdaConfiguration extends AbstractMojo
                         {
                             m_logger.info("Enable CORS for our integration response"); 
                             Map<String,String> integrationResponseParameters = new HashMap<String,String>();
-                            integrationResponseParameters.put("method.response.header.Access-Control-Allow-Methods", "'GET,POST,OPTIONS'");
                             integrationResponseParameters.put("method.response.header.Access-Control-Allow-Origin", "'*'");
-                            integrationResponseParameters.put("method.response.header.Access-Control-Allow-Headers", "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'");
                             
                             putIntegrationResponseRequest.setResponseParameters(integrationResponseParameters);
                         }
@@ -537,6 +524,80 @@ public class LambdaConfiguration extends AbstractMojo
                         putIntegrationResponseRequest.setResponseTemplates(responseTemplates);
                         
                         m_awsGatewayClient.createIntegrationResponse(putIntegrationResponseRequest);
+                        
+                        // Check if we should enable CORS
+                        if(awsLambdaWithGatewayAnnotation.enableCORS())
+                        {
+                            Thread.sleep(1000);
+                            m_logger.info("Create our method with type: OPTIONS  authorization: NONE"); 
+                            PutMethodRequest putOptionsMethodRequest = new PutMethodRequest();
+                            putOptionsMethodRequest.setRestApiId(getRestApiResult.getId());
+                            putOptionsMethodRequest.setResourceId(createResourceResult.getId());
+                            putOptionsMethodRequest.setApiKeyRequired(false);
+                            putOptionsMethodRequest.setAuthorizationType(AwsLambdaWithGateway.AuthorizationTypes.NONE.toString());
+                            putOptionsMethodRequest.setHttpMethod(AwsLambdaWithGateway.MethodTypes.OPTIONS.toString());
+                            
+                            m_awsGatewayClient.createMethod(putOptionsMethodRequest);
+                            
+                            Thread.sleep(1000);
+                            m_logger.info("Create our integration with type: OPTIONS"); 
+                            PutIntegrationRequest putOptionsIntegrationRequest = new PutIntegrationRequest();
+                            putOptionsIntegrationRequest.setRestApiId(getRestApiResult.getId());
+                            putOptionsIntegrationRequest.setResourceId(createResourceResult.getId());
+                            putOptionsIntegrationRequest.setHttpMethod(AwsLambdaWithGateway.MethodTypes.OPTIONS.toString());
+                            putOptionsIntegrationRequest.setType(IntegrationType.MOCK);
+                            putOptionsIntegrationRequest.setIntegrationHttpMethod(AwsLambdaWithGateway.MethodTypes.OPTIONS.toString());
+                            
+                            Map<String, String> requestIntegrationOptionsTemplates = new HashMap<String, String>();
+                            requestIntegrationOptionsTemplates.put("application/json", "{\"statusCode\": 200}");
+                            putOptionsIntegrationRequest.setRequestTemplates(requestIntegrationOptionsTemplates);
+                            
+                            m_awsGatewayClient.createIntegration(putOptionsIntegrationRequest);
+                            
+                            Thread.sleep(1000);
+                            m_logger.info("Create our method response with type: OPTIONS"); 
+                            PutMethodResponseRequest putOptionsMethodResponseRequest = new PutMethodResponseRequest();
+                            putOptionsMethodResponseRequest.setRestApiId(getRestApiResult.getId());
+                            putOptionsMethodResponseRequest.setResourceId(createResourceResult.getId());
+                            putOptionsMethodResponseRequest.setHttpMethod(AwsLambdaWithGateway.MethodTypes.OPTIONS.toString());
+                            putOptionsMethodResponseRequest.setStatusCode("200");
+                            
+                            Map<String, String> optionsResponseModels = new HashMap<String, String>();
+                            optionsResponseModels.put("application/json", "Empty");
+                            putOptionsMethodResponseRequest.setResponseModels(optionsResponseModels);                            
+                            
+                            m_logger.info("Enable CORS for our OPTIONS method response"); 
+                            Map<String,Boolean> methodOptionsResponseParameters = new HashMap<String,Boolean>();
+                            methodOptionsResponseParameters.put("method.response.header.Access-Control-Allow-Methods", new Boolean("true"));
+                            methodOptionsResponseParameters.put("method.response.header.Access-Control-Allow-Origin", new Boolean("true"));
+                            methodOptionsResponseParameters.put("method.response.header.Access-Control-Allow-Headers", new Boolean("true"));
+                            
+                            putOptionsMethodResponseRequest.setResponseParameters(methodOptionsResponseParameters);
+                            
+                            m_awsGatewayClient.createMethodResponse(putOptionsMethodResponseRequest);
+                            
+                            Thread.sleep(1000);
+                            m_logger.info("Create our integration response"); 
+                            PutIntegrationResponseRequest putOptionsIntegrationResponseRequest = new PutIntegrationResponseRequest();
+                            putOptionsIntegrationResponseRequest.setRestApiId(getRestApiResult.getId());
+                            putOptionsIntegrationResponseRequest.setResourceId(createResourceResult.getId());
+                            putOptionsIntegrationResponseRequest.setHttpMethod(AwsLambdaWithGateway.MethodTypes.OPTIONS.toString());
+                            putOptionsIntegrationResponseRequest.setStatusCode("200");
+                            
+                            m_logger.info("Enable CORS for our OPTIONS integration response"); 
+                            Map<String,String> integrationOptionsResponseParameters = new HashMap<String,String>();
+                            integrationOptionsResponseParameters.put("method.response.header.Access-Control-Allow-Headers", "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'");
+                            integrationOptionsResponseParameters.put("method.response.header.Access-Control-Allow-Methods", "'POST,OPTIONS'");
+                            integrationOptionsResponseParameters.put("method.response.header.Access-Control-Allow-Origin", "'*'");
+                            
+                            putOptionsIntegrationResponseRequest.setResponseParameters(integrationOptionsResponseParameters);
+                            
+                            Map<String, String> responseIntegrationOptionsTemplates = new HashMap<String, String>();
+                            responseIntegrationOptionsTemplates.put("application/json", "Empty");
+                            putOptionsIntegrationResponseRequest.setResponseTemplates(responseIntegrationOptionsTemplates);
+                            
+                            m_awsGatewayClient.createIntegrationResponse(putOptionsIntegrationResponseRequest);
+                        }
                         
                         m_logger.info("Waiting for provisioning operation to complete before starting deployment........"); 
                         Thread.sleep(5000);
@@ -579,12 +640,37 @@ public class LambdaConfiguration extends AbstractMojo
                         
                         m_awsLambdaClient.addPermission(deployAddPermissionRequest);
                         
-                        // Check if we should enable CORS
                         if(awsLambdaWithGatewayAnnotation.enableCORS())
                         {
-                            m_logger.info("Unable to configure CORS on your resource method.  SansServer-Plugin does not currectly support this function.  Please manage this through the AWS Console for the time being.");
+                            Thread.sleep(1000);
+                            m_logger.info("Create our function permissions for testing"); 
+                            AddPermissionRequest testingOptionsAddPermissionRequest = new AddPermissionRequest();
+                            testingOptionsAddPermissionRequest.setFunctionName(generatedlambdaName);
                             
-                            // TODO Add CORS support
+                            String testOptionsStatementId = "apigateway-" + environmentPrefix + "-test-" + SecureUUID.generateUniqueNumber(4);
+                            testingOptionsAddPermissionRequest.setStatementId(testOptionsStatementId.toLowerCase());
+                            testingOptionsAddPermissionRequest.setAction("lambda:InvokeFunction");
+                            testingOptionsAddPermissionRequest.setPrincipal("apigateway.amazonaws.com");
+                            
+                            String testOptionsSourceArn = "arn:aws:execute-api:" + regionName + ":" + accountId + ":" + getRestApiResult.getId() + "/*/" + AwsLambdaWithGateway.MethodTypes.OPTIONS.toString() + "/" + awsLambdaWithGatewayAnnotation.resourceName();
+                            testingOptionsAddPermissionRequest.setSourceArn(testOptionsSourceArn);
+                            
+                            m_awsLambdaClient.addPermission(testingOptionsAddPermissionRequest);
+                            
+                            Thread.sleep(1000);
+                            m_logger.info("Create our function permissions for the deployment"); 
+                            AddPermissionRequest deployOptionsAddPermissionRequest = new AddPermissionRequest();
+                            deployOptionsAddPermissionRequest.setFunctionName(generatedlambdaName);
+                            
+                            String deployOptionStatementId = "apigateway-" + environmentPrefix + "-" + stageName + "-" + SecureUUID.generateUniqueNumber(4);
+                            deployOptionsAddPermissionRequest.setStatementId(deployOptionStatementId.toLowerCase());
+                            deployOptionsAddPermissionRequest.setAction("lambda:InvokeFunction");
+                            deployOptionsAddPermissionRequest.setPrincipal("apigateway.amazonaws.com");
+                            
+                            String deployOptionSourceArn = "arn:aws:execute-api:" + regionName + ":" + accountId + ":" + getRestApiResult.getId() + "/" + stageName + "/" + AwsLambdaWithGateway.MethodTypes.OPTIONS.toString() + "/" + awsLambdaWithGatewayAnnotation.resourceName();
+                            deployOptionsAddPermissionRequest.setSourceArn(deployOptionSourceArn);
+                            
+                            m_awsLambdaClient.addPermission(deployOptionsAddPermissionRequest);
                         }
                         
                         m_logger.info("Lambda Gateway API Complete"); 

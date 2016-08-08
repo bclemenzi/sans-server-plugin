@@ -26,9 +26,7 @@ public class AmazonCognitoManager
     
     /**
      * 
-     * @param accessKey
-     * @param secretKey
-     * @param IdentityPoolId
+     * @param properties
      */
     public AmazonCognitoManager(Properties properties)
     {

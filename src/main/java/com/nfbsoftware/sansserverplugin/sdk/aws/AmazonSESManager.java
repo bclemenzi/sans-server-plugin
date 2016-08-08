@@ -34,7 +34,6 @@ public class AmazonSESManager
     
     /**
      * 
-     * @param logger
      * @param properties
      */
     public AmazonSESManager(Properties properties)

@@ -47,7 +47,6 @@ public class AmazonS3Manager
 
     /**
      * 
-     * @param logger
      * @param properties
      */
     public AmazonS3Manager(Properties properties)

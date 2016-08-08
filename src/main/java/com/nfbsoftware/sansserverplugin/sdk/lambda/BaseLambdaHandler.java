@@ -23,10 +23,10 @@ public class BaseLambdaHandler implements ILambdaFunction
     protected Object m_input;
     protected Context m_context;
     
-    protected HashMap<String, String> m_requestHeaders;
-    protected HashMap<String, String> m_requestParams;
-    protected HashMap<String, String> m_requestQuery;
-    protected HashMap<String, String> m_requestBody;
+    protected HashMap<String, String> m_requestHeaders = new HashMap<String, String>();
+    protected HashMap<String, String> m_requestParams = new HashMap<String, String>();
+    protected HashMap<String, String> m_requestQuery = new HashMap<String, String>();
+    protected HashMap<String, String> m_requestBody = new HashMap<String, String>();
     
     protected HashMap<String, Object> m_inputHashMap;
     
@@ -271,10 +271,60 @@ public class BaseLambdaHandler implements ILambdaFunction
         HashMap<String, Object> inputHashMap = (HashMap<String, Object>)input;
         m_inputHashMap = inputHashMap;
         
-        m_requestHeaders = (HashMap<String, String>)m_inputHashMap.get("headers");
-        m_requestParams = (HashMap<String, String>)m_inputHashMap.get("params");
-        m_requestQuery = (HashMap<String, String>)m_inputHashMap.get("query");
-        m_requestBody = (HashMap<String, String>)m_inputHashMap.get("body");
+        Object tmpHeaders = m_inputHashMap.get("headers");
+        if(tmpHeaders != null)
+        {
+            try
+            {
+                m_requestHeaders = (HashMap<String, String>)m_inputHashMap.get("headers");
+            }
+            catch (Exception e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        
+        Object tmpParams = m_inputHashMap.get("params");
+        if(tmpParams != null)
+        {
+            try
+            {
+                m_requestParams = (HashMap<String, String>)m_inputHashMap.get("params");
+            }
+            catch (Exception e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        
+        Object tmpQuery = m_inputHashMap.get("query");
+        if(tmpQuery != null)
+        {
+            try
+            {
+                m_requestQuery = (HashMap<String, String>)m_inputHashMap.get("query");
+            }
+            catch (Exception e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        
+        Object tmpBody = m_inputHashMap.get("body");
+        if(tmpBody != null)
+        {
+            try
+            {
+                m_requestBody = (HashMap<String, String>)m_inputHashMap.get("body");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
 
         try
         {
