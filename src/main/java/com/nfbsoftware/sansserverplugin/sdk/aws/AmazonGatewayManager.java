@@ -20,6 +20,11 @@ import com.amazonaws.services.apigateway.model.GetApiKeyRequest;
 import com.amazonaws.services.apigateway.model.GetApiKeyResult;
 import com.amazonaws.services.apigateway.model.GetApiKeysRequest;
 import com.amazonaws.services.apigateway.model.GetApiKeysResult;
+import com.amazonaws.services.apigateway.model.GetRestApiRequest;
+import com.amazonaws.services.apigateway.model.GetRestApiResult;
+import com.amazonaws.services.apigateway.model.GetRestApisRequest;
+import com.amazonaws.services.apigateway.model.GetRestApisResult;
+import com.amazonaws.services.apigateway.model.RestApi;
 import com.nfbsoftware.sansserverplugin.sdk.util.Entity;
 import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
 
@@ -54,6 +59,59 @@ public class AmazonGatewayManager
 
         // Set our region
         m_amazonApiGatewayClient.setRegion(Region.getRegion(Regions.fromName(regionName)));
+    }
+    
+    /**
+     * 
+     * @param restApiId
+     * @return
+     */
+    public GetRestApiResult getRestApi(String restApiId) 
+    {
+        GetRestApiResult getRestApiResult = null;
+        
+        try
+        {
+            GetRestApiRequest getRestApiRequest = new GetRestApiRequest();
+            getRestApiRequest.setRestApiId(restApiId);
+
+            getRestApiResult =  m_amazonApiGatewayClient.getRestApi(getRestApiRequest);
+        }
+        catch (Exception e)
+        {
+            // Do nothing
+        }
+        
+        return getRestApiResult;
+    }
+
+    /**
+     * 
+     * @param restApiName
+     * @return
+     */
+    public GetRestApiResult getRestApiByName(String restApiName) 
+    {
+        GetRestApiResult restApiResult = null;
+        
+        GetRestApisRequest getRestApisRequest = new GetRestApisRequest();
+        GetRestApisResult result = m_amazonApiGatewayClient.getRestApis(getRestApisRequest);
+        
+        List<RestApi> restApis = result.getItems();
+        
+        for(RestApi restApi : restApis)
+        {
+            String tempApiName = StringUtil.emptyIfNull(restApi.getName());
+            m_logger.info("tempApiName: " + tempApiName + "  " + restApi.toString());
+            
+            if(tempApiName.equalsIgnoreCase(restApiName))
+            {
+                m_logger.info("RestAPI Found: " + restApi.getId());
+                restApiResult = getRestApi(restApi.getId());
+            }
+        }
+
+        return restApiResult;
     }
 
     /**

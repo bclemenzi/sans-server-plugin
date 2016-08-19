@@ -212,7 +212,7 @@ public class DeployWebApplication extends AbstractMojo
             String idenityPoolId = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_COGNITO_IDENTITY_POOL_ID));
             String regionName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_REGION));
             
-            String projectGatewayName = environmentPrefix + "_" + projectName;
+            String projectGatewayName = environmentPrefix + "_GATEWAY";
             String invokeUrl = StringUtil.emptyIfNull(m_awsGatewayClient.getRestApiInvokeUrl(projectGatewayName));
             
             defaultJavascript.append("var globalAppConfig = new function()\n");

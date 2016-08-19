@@ -178,7 +178,7 @@ public class LambdaConfiguration extends AbstractMojo
         String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         
         // Create a generated function name so that we can isolate multiple deployments
-        String projectGatewayName = environmentPrefix + "_" + projectName;
+        String projectGatewayName = environmentPrefix + "_GATEWAY";
         
         // Loop through our class files to collect the names of our active functions
         for(String classFileName : lambdaClassFiles)
@@ -321,7 +321,7 @@ public class LambdaConfiguration extends AbstractMojo
         String environmentPrefix = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_PREFIX));
         
         // Generate our environment-based gateway name
-        String projectGatewayName = environmentPrefix + "_" + projectName;
+        String projectGatewayName = environmentPrefix + "_GATEWAY";
         
         GetRestApiResult restApiResult = m_awsGatewayClient.getRestApiByName(projectGatewayName);
         
@@ -356,7 +356,7 @@ public class LambdaConfiguration extends AbstractMojo
         String deploymentStage = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_STAGE));
         
         // Generate our environment-based gateway name
-        String projectGatewayName = environmentPrefix + "_" + projectName;
+        String projectGatewayName = environmentPrefix + "_GATEWAY";
         
         GetRestApiResult restApiResult = m_awsGatewayClient.getRestApiByName(projectGatewayName);
         
@@ -409,7 +409,7 @@ public class LambdaConfiguration extends AbstractMojo
         String stageName = StringUtil.emptyIfNull(m_properties.getProperty(Entity.FrameworkProperties.ENVIRONEMNT_STAGE));
         
         // Create a generated function name so that we can isolate multiple deployments
-        String projectGatewayName = environmentPrefix + "_" + projectName;
+        String projectGatewayName = environmentPrefix + "_GATEWAY";
         String generatedlambdaName = StringUtil.replaceSubstr(environmentPrefix + "_" + name, " ", "");
         
         m_logger.info("projectGatewayName: " + projectGatewayName);
