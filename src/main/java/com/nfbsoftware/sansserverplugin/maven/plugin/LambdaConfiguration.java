@@ -32,11 +32,13 @@ import com.amazonaws.services.apigateway.model.PutIntegrationResponseRequest;
 import com.amazonaws.services.apigateway.model.PutMethodRequest;
 import com.amazonaws.services.apigateway.model.PutMethodResponseRequest;
 import com.amazonaws.services.apigateway.model.Resource;
+import com.amazonaws.services.cloudwatchevents.model.PutRuleRequest;
 import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.FunctionConfiguration;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionConfigurationRequest;
+import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonCloudWatchEventUtility;
 import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonGatewayUtility;
 import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonLambdaUtility;
 import com.nfbsoftware.sansserverplugin.maven.amazon.AmazonS3Utility;
@@ -59,6 +61,7 @@ public class LambdaConfiguration extends AbstractMojo
     private AmazonS3Utility m_amazonS3Utility;
     private AmazonLambdaUtility m_awsLambdaClient;
     private AmazonGatewayUtility m_awsGatewayClient;
+    private AmazonCloudWatchEventUtility m_amazonCloudWatchEventUtility;
     
     private Properties m_properties = new Properties();
     
@@ -121,6 +124,9 @@ public class LambdaConfiguration extends AbstractMojo
             
             m_logger.info("Initializing AWS Gateway API");
             m_awsGatewayClient = new AmazonGatewayUtility(m_logger, m_properties);
+            
+            m_logger.info("Initializing AWS Cloud Watch Event Utility");
+            m_amazonCloudWatchEventUtility = new AmazonCloudWatchEventUtility(m_logger, m_properties);
             
             m_logger.info("Initializing AWS Lambda");
             m_awsLambdaClient = new AmazonLambdaUtility(m_logger, m_properties);
@@ -277,7 +283,7 @@ public class LambdaConfiguration extends AbstractMojo
                 
                 if(awsLambdaAnnotation != null)
                 {
-                    deployLambdaFunction(classFileName, awsLambdaAnnotation.name(), awsLambdaAnnotation.desc(), awsLambdaAnnotation.handlerMethod(), awsLambdaAnnotation.memorySize(), awsLambdaAnnotation.timeout());
+                    deployLambdaFunction(classFileName, awsLambdaAnnotation.name(), awsLambdaAnnotation.desc(), awsLambdaAnnotation.handlerMethod(), awsLambdaAnnotation.memorySize(), awsLambdaAnnotation.timeout(), awsLambdaAnnotation.enablePing());
                 }
             }
             if(classObject.isAnnotationPresent(AwsLambdaWithGateway.class))
@@ -287,7 +293,7 @@ public class LambdaConfiguration extends AbstractMojo
                 if(awsLambdaWithGatewayAnnotation != null)
                 {
                     // Deploy out Lambda function
-                    deployLambdaFunction(classFileName, awsLambdaWithGatewayAnnotation.name(), awsLambdaWithGatewayAnnotation.desc(), awsLambdaWithGatewayAnnotation.handlerMethod(), awsLambdaWithGatewayAnnotation.memorySize(), awsLambdaWithGatewayAnnotation.timeout());
+                    deployLambdaFunction(classFileName, awsLambdaWithGatewayAnnotation.name(), awsLambdaWithGatewayAnnotation.desc(), awsLambdaWithGatewayAnnotation.handlerMethod(), awsLambdaWithGatewayAnnotation.memorySize(), awsLambdaWithGatewayAnnotation.timeout(), awsLambdaWithGatewayAnnotation.enablePing());
                     
                     // Make sure we have our API Gateway to link our Lambda functions to
                     if(!m_hasGateway)
@@ -689,7 +695,7 @@ public class LambdaConfiguration extends AbstractMojo
      * @param awsLambdaAnnotation
      * @throws Exception
      */
-    private void deployLambdaFunction(String classFileName, String name, String description, String handlerMethod, String memorySize, String timeout) throws Exception
+    private void deployLambdaFunction(String classFileName, String name, String description, String handlerMethod, String memorySize, String timeout, boolean enablePing) throws Exception
     {
         // Sleep for a 1/2 a second as to not overload our AWS throttling limits
         Thread.sleep(2000);
@@ -725,6 +731,12 @@ public class LambdaConfiguration extends AbstractMojo
             
             // Update our function
             m_awsLambdaClient.updateFunction(deploymentJarFileName, generatedlambdaName);
+            
+            // Configure Ping if needed to keep the function in memory
+            if(enablePing)
+            {
+                // TODO Add cloud ping event
+            }
         }
         else
         {
@@ -743,6 +755,12 @@ public class LambdaConfiguration extends AbstractMojo
             
             // Create our function
             m_awsLambdaClient.createFunction(deploymentJarFileName, createFunctionRequest);
+            
+            // Configure Ping if needed to keep the function in memory
+            if(enablePing)
+            {
+                // TODO Add cloud ping event
+            }
         }
     }
 

@@ -1,14 +1,18 @@
 package com.nfbsoftware.sansserverplugin.sdk.lambda;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nfbsoftware.sansserverplugin.sdk.lambda.model.HandlerResponse;
+import com.nfbsoftware.sansserverplugin.sdk.util.StringUtil;
 
 /**
  * The BaseHandler should be used as a base function for Lambda.  It will create a baseline set of objects needed by all our functions.
@@ -318,7 +322,32 @@ public class BaseLambdaHandler implements ILambdaFunction
         {
             try
             {
-                m_requestBody = (HashMap<String, String>)m_inputHashMap.get("body");
+                // If the body is coming to us like "take=6&skip=0&page=1&pageSize=6" then
+                // we will need to parse the string into the individual parameters
+                if(tmpBody instanceof String)
+                {
+                    String rawBody = tmpBody.toString();
+                    
+                    String[] parsedBody = StringUtil.parseString(rawBody, "&");
+                    List<String> parameterList = new ArrayList<String>(Arrays.asList(parsedBody));
+                    
+                    for(String tmpParam : parameterList)
+                    {
+                        if(tmpParam.contains("="))
+                        {
+                            String[] parsedParam = StringUtil.parseString(tmpParam, "=");
+                            
+                            String decodedValue = java.net.URLDecoder.decode(StringUtil.emptyIfNull(parsedParam[1]), "UTF-8");
+                        
+                            m_requestBody.put(parsedParam[0], decodedValue);
+                        }
+                    }
+                }
+                else
+                {
+                    // Cast the body map to 
+                    m_requestBody = (HashMap<String, String>)m_inputHashMap.get("body");
+                }
             }
             catch (Exception e)
             {

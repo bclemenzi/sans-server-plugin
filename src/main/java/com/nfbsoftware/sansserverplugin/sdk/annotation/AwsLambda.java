@@ -19,4 +19,6 @@ public @interface AwsLambda
     String handlerMethod();
     String memorySize() default "128";
     String timeout() default "60";
+    
+    boolean enablePing() default false;
 }

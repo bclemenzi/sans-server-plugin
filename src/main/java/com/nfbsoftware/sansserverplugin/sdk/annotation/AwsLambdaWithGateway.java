@@ -43,4 +43,5 @@ public @interface AwsLambdaWithGateway
 
     boolean keyRequired() default false;
     boolean enableCORS() default false;
+    boolean enablePing() default false;
 }
