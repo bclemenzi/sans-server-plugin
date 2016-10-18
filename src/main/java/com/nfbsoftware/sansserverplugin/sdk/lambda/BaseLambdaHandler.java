@@ -256,6 +256,44 @@ public class BaseLambdaHandler implements ILambdaFunction
     }
     
     /**
+     * The getRequestParameter method is a convenience method that will loop though our three possible 
+     * 
+     * @param bodyKey
+     * @return
+     */
+    protected String getRequestParameter(String key)
+    {
+        String tmpValue = getBody(key);
+
+        // If body is null then try from the query string
+        if(StringUtil.isNullOrEmpty(tmpValue))
+        {
+            tmpValue = getQuery(key);
+        }
+        
+        // If body/query are null then try from the input object
+        if(StringUtil.isNullOrEmpty(tmpValue))
+        {
+            try
+            {
+                tmpValue = (String)getInputObject(key);
+            }
+            catch (Exception e)
+            {
+                tmpValue = null;
+            }
+        }
+        
+        // If body/query/Input are null then try from the header object
+        if(StringUtil.isNullOrEmpty(tmpValue))
+        {
+            tmpValue = getHeader(key);
+        }
+
+        return tmpValue;
+    }
+    
+    /**
      * This is the primary method used/configured for Lambda.  Be default, we do not want to override this method.
      * 
      * @param input
