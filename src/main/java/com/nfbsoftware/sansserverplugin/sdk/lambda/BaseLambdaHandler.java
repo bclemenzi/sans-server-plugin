@@ -371,13 +371,24 @@ public class BaseLambdaHandler implements ILambdaFunction
                     
                     for(String tmpParam : parameterList)
                     {
-                        if(tmpParam.contains("="))
+                        try
                         {
-                            String[] parsedParam = StringUtil.parseString(tmpParam, "=");
-                            
-                            String decodedValue = java.net.URLDecoder.decode(StringUtil.emptyIfNull(parsedParam[1]), "UTF-8");
-                        
-                            m_requestBody.put(parsedParam[0], decodedValue);
+                            if(tmpParam.contains("="))
+                            {
+                                String[] parsedParam = StringUtil.parseString(tmpParam, "=");
+                                
+                                String tmpValue = StringUtil.EMPTY_STRING;
+                                if(parsedParam.length == 2)
+                                {
+                                    tmpValue = java.net.URLDecoder.decode(StringUtil.emptyIfNull(parsedParam[1]), "UTF-8");
+                                }
+                                
+                                m_requestBody.put(parsedParam[0], tmpValue);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            m_logger.log("Error parsing body parameter: " + tmpParam);
                         }
                     }
                 }
