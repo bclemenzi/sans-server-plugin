@@ -6,7 +6,7 @@
   	<groupId>com.nfbsoftware</groupId>
   	<artifactId>sans-server-plugin</artifactId>
   	<packaging>maven-plugin</packaging>
-  	<version>1.0.47</version>
+  	<version>1.0.50</version>
   	
   	<name>NFB Software SansServer Plugin</name>
   	<description>The NFB Software SansServer-Plugin serves two purposes, one as a development SDK and the other as a Maven plugin to build, provision, and deploy SansServer-based applications.</description>

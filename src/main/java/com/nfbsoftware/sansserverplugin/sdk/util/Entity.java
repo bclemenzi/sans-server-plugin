@@ -36,5 +36,7 @@ public class Entity
         public static final String AWS_S3_DEPLOYMENT_FOLDER             = "aws.s3.deploymentFolder";
         
         public static final String AWS_SES_REPLY_EMAIL_ADDRESS          = "aws.ses.replyEmailAddress";
+        
+        public static final String AWS_APIGATEWAY_CORS_ORIGIN           = "aws.apigateway.cors.Access-Control-Allow-Origin";
     }
 }

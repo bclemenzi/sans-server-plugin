@@ -32,7 +32,6 @@ import com.amazonaws.services.apigateway.model.PutIntegrationResponseRequest;
 import com.amazonaws.services.apigateway.model.PutMethodRequest;
 import com.amazonaws.services.apigateway.model.PutMethodResponseRequest;
 import com.amazonaws.services.apigateway.model.Resource;
-import com.amazonaws.services.cloudwatchevents.model.PutRuleRequest;
 import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.FunctionConfiguration;
@@ -519,8 +518,10 @@ public class LambdaConfiguration extends AbstractMojo
                         if(awsLambdaWithGatewayAnnotation.enableCORS())
                         {
                             m_logger.info("Enable CORS for our integration response"); 
+                            String accessControlAllowOrigin = StringUtil.replaceIfNull(m_properties.getProperty(Entity.FrameworkProperties.AWS_APIGATEWAY_CORS_ORIGIN), "*");
+                            
                             Map<String,String> integrationResponseParameters = new HashMap<String,String>();
-                            integrationResponseParameters.put("method.response.header.Access-Control-Allow-Origin", "'*'");
+                            integrationResponseParameters.put("method.response.header.Access-Control-Allow-Origin", "'" + accessControlAllowOrigin + "'");
                             
                             putIntegrationResponseRequest.setResponseParameters(integrationResponseParameters);
                         }

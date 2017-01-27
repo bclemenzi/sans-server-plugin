@@ -39,7 +39,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.47</version>
+			<version>1.0.50</version>
 		</dependency>
 	</dependencies>
 ```
@@ -234,6 +234,8 @@ The SansServer-Plugin (SDK/Maven) expects there to be build.properties file foun
   * The name of the S3 bucket folder used to upload the Lambda deployment JAR
  * aws.ses.replyEmailAddress
   * The email address to use as your "from" address when sending email through the service
+ * aws.apigateway.cors.Access-Control-Allow-Origin
+  * When using the API Gateway, this value will be used to restrict your access controls.
 
 Along with the required build.properties file.  The sans-server-plugin assumes that your Maven project follows the following folder structure at a minimum:
 
