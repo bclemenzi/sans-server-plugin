@@ -138,6 +138,7 @@ public class WebPost
         }
         catch (IOException e)
         {
+            e.printStackTrace();
             throw new Exception("WebPost::securePost->Exception type is " + e.getClass().toString());
         }
 

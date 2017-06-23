@@ -170,13 +170,20 @@ public class AmazonSESManager
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(replyEmailAddress));
 
-            message.setSubject(messageSubject);
+            if(!StringUtil.isNullOrEmpty(messageSubject))
+            {
+                message.setSubject(messageSubject);
+            }
             
-            MimeBodyPart messageBodyPart = new MimeBodyPart();
-            messageBodyPart.setContent(messageBody, "text/html");
-
             Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(messageBodyPart);
+            
+            if(!StringUtil.isNullOrEmpty(messageBody))
+            {
+                MimeBodyPart messageBodyPart = new MimeBodyPart();
+                messageBodyPart.setContent(messageBody, "text/html");
+
+                multipart.addBodyPart(messageBodyPart);
+            }
 
             if (null != fileAttachment) 
             {

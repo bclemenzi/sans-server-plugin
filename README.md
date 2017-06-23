@@ -39,7 +39,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.51</version>
+			<version>1.0.52</version>
 		</dependency>
 	</dependencies>
 ```
@@ -83,7 +83,7 @@ Including the Maven plugin in your project by adding the following configuration
 			<plugin>
                 <groupId>com.nfbsoftware</groupId>
 				<artifactId>sans-server-plugin</artifactId>
-				<version>1.0.51</version>
+				<version>1.0.52</version>
             	<executions>
                 	<execution>
                 		<id>first-execution</id>
