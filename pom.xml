@@ -6,7 +6,7 @@
   	<groupId>com.nfbsoftware</groupId>
   	<artifactId>sans-server-plugin</artifactId>
   	<packaging>maven-plugin</packaging>
-  	<version>1.0.52</version>
+  	<version>1.0.53</version>
   	
   	<name>NFB Software SansServer Plugin</name>
   	<description>The NFB Software SansServer-Plugin serves two purposes, one as a development SDK and the other as a Maven plugin to build, provision, and deploy SansServer-based applications.</description>
@@ -67,18 +67,6 @@
         		<executions>
           			<execution>
             			<id>package-sources</id>
-            			<goals>
-              				<goal>jar</goal>
-            			</goals>
-          			</execution>
-        		</executions>
-      		</plugin>
-      		<plugin>
-        		<artifactId>maven-javadoc-plugin</artifactId>
-        		<executions>
-          			<execution>
-            			<id>package-javadoc</id>
-            			<phase>package</phase>
             			<goals>
               				<goal>jar</goal>
             			</goals>
@@ -151,7 +139,7 @@
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk</artifactId>
 			<version>1.11.21</version>
-		</dependency>
+    	</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-lambda-java-core</artifactId>
@@ -162,6 +150,11 @@
 			<artifactId>aws-lambda-java-events</artifactId>
 			<version>1.3.0</version>
 		</dependency>
+		<dependency>      
+  			<groupId>com.amazonaws</groupId>
+  			<artifactId>aws-java-sdk-cloudsearch</artifactId>
+  			<version>1.9.33</version>
+		</dependency> 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -177,5 +170,10 @@
             <artifactId>mail</artifactId>
             <version>1.4</version>
         </dependency>
+		<dependency>
+    		<groupId>com.amazonaws</groupId>
+    		<artifactId>elasticache-java-cluster-client</artifactId>
+    		<version>1.1.1</version>
+		</dependency>
 	</dependencies>
 </project>

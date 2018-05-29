@@ -44,6 +44,7 @@ public class AmazonCloudWatchEventUtility
     /**
      * 
      * @param putRuleRequest
+     * @return
      * @throws Exception
      */
     public PutRuleResult createRule(PutRuleRequest putRuleRequest) throws Exception

@@ -38,5 +38,8 @@ public class Entity
         public static final String AWS_SES_REPLY_EMAIL_ADDRESS          = "aws.ses.replyEmailAddress";
         
         public static final String AWS_APIGATEWAY_CORS_ORIGIN           = "aws.apigateway.cors.Access-Control-Allow-Origin";
+        
+        public static final String AWS_MEMCACHED_HOST                   = "aws.memcached.host";
+        public static final String AWS_MEMCACHED_PORT                   = "aws.memcached.port";
     }
 }

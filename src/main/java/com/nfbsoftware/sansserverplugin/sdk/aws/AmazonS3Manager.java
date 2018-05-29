@@ -73,7 +73,7 @@ public class AmazonS3Manager
 
     /**
      * 
-     * @throws Exception
+     * @return
      */
     public String getWebsitePath()
     {
@@ -84,7 +84,8 @@ public class AmazonS3Manager
 
     /**
      * 
-     * @throws Exception
+     * @param folderName
+     * @return
      */
     public String getConfiguredPath(String folderName)
     {

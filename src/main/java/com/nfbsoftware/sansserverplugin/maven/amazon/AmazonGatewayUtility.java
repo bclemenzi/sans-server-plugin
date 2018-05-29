@@ -164,8 +164,9 @@ public class AmazonGatewayUtility
     
     /**
      * 
-     * @param restApiName
+     * @param restApiId
      * @return
+     * @throws Exception
      */
     public GetResourceResult getRestApiRootResource(String restApiId) throws Exception
     {
@@ -238,6 +239,7 @@ public class AmazonGatewayUtility
     /**
      * 
      * @param resourceId
+     * @return
      * @throws Exception
      */
     public GetResourceResult getResource(String resourceId) throws Exception
@@ -264,7 +266,7 @@ public class AmazonGatewayUtility
     /**
      * 
      * @param restApiId
-     * @param pathPart
+     * @param path
      * @return
      * @throws Exception
      */
@@ -353,6 +355,7 @@ public class AmazonGatewayUtility
     /**
      * 
      * @param createResourceRequest
+     * @return
      * @throws Exception
      */
     public CreateResourceResult createResource(CreateResourceRequest createResourceRequest) throws Exception

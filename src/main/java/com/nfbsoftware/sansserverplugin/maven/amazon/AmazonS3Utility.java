@@ -143,6 +143,10 @@ public class AmazonS3Utility
         }
     }
 
+    /**
+     * 
+     * @return
+     */
     private BucketWebsiteConfiguration getWebsiteConfig()
     {
         m_logger.info("Get website config");
@@ -163,7 +167,7 @@ public class AmazonS3Utility
     
     /**
      * 
-     * @throws Exception
+     * @return
      */
     public String getWebsitePath()
     {
@@ -174,7 +178,8 @@ public class AmazonS3Utility
 
     /**
      * 
-     * @throws Exception
+     * @param folderName
+     * @return
      */
     public String getConfiguredPath(String folderName)
     {
@@ -184,6 +189,7 @@ public class AmazonS3Utility
 
     /**
      * 
+     * @param folderName
      * @param fileName
      * @param fileObject
      * @throws Exception
@@ -200,6 +206,7 @@ public class AmazonS3Utility
 
     /**
      * 
+     * @param folderName
      * @param fileName
      * @return
      * @throws Exception
@@ -239,6 +246,7 @@ public class AmazonS3Utility
 
     /**
      * 
+     * @param folderName
      * @param fileName
      * @throws Exception
      */
@@ -287,10 +295,10 @@ public class AmazonS3Utility
     }
 
     /**
-     * Generates a pre-signed access url for the resource stored in Amazon S3
      * 
      * @param folderName
      * @param fileName
+     * @return
      * @throws Exception
      */
     public String getPreSignedUrl(String folderName, String fileName) throws Exception
@@ -338,7 +346,6 @@ public class AmazonS3Utility
      * @param fileName
      * @param fileObject
      * @return
-     * @throws IOException
      */
     private boolean uploadToAwsS3(String folderName, String fileName, File fileObject)
     {
@@ -389,9 +396,9 @@ public class AmazonS3Utility
 
     /**
      * 
+     * @param folderName
      * @param fileName
      * @return
-     * @throws IOException
      */
     private File downloadFromAwsS3(String folderName, String fileName)
     {
@@ -450,9 +457,9 @@ public class AmazonS3Utility
 
     /**
      * 
+     * @param folderName
      * @param fileName
      * @return
-     * @throws IOException
      */
     private byte[] downloadFromAwsS3AsBytes(String folderName, String fileName)
     {
@@ -499,6 +506,7 @@ public class AmazonS3Utility
 
     /**
      * 
+     * @param folderName
      * @param fileName
      * @return
      */

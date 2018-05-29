@@ -28,11 +28,9 @@ public class StringUtil
         'C' , 'D' , 'E' , 'F' };
    
    /**
-    * Test if passed string <b>s</b> is <b>null</b> and return an empty
-    * string if true.
-    * @param s A string or null
-    * @return Returns <b>s</b> if it is not null, otherwise returns empty
-    * string.
+    * 
+    * @param s
+    * @return
     */
    public static String emptyIfNull(String s)
    {
@@ -40,11 +38,10 @@ public class StringUtil
    }
    
    /**
-    * Test if passed string <b>s</b> is <b>null</b> and return the default
-    * string passed in if true.
-    * @param s A string or null
-    * @return Returns <b>s</b> if it is not null, otherwise returns empty
-    * string.
+    * 
+    * @param s
+    * @param defaultValue
+    * @return
     */
    public static String replaceIfNull(String s, String defaultValue)
    {
@@ -52,10 +49,9 @@ public class StringUtil
    }
 
    /**
-    * Test if passed string <b>s</b> is an empty string and return null
-    * if true.
-    * @param s A string or null
-    * @return Returns <b>s</b> if it is not empty, otherwise returns null.
+    * 
+    * @param s
+    * @return
     */
    public static String nullIfEmpty(String s)
    {
@@ -72,10 +68,9 @@ public class StringUtil
    }
 
    /**
-    * Test if passed string <b>s</b> is an empty string (after being trimmed
-    * of leading/trailing whitespace) and return null if true.
-    * @param s A string or null
-    * @return Returns <b>s</b> if it is not empty, otherwise returns null.
+    * 
+    * @param s
+    * @return
     */
    public static String nullIfEmptyTrim(String s)
    {
@@ -92,9 +87,9 @@ public class StringUtil
    }
 
    /**
-    * Test if passed string <b>s</b> is an empty string or null.
-    * @param s A string or null
-    * @return If null or empty, return true, else return false.
+    * 
+    * @param s
+    * @return
     */
    public static boolean isNullOrEmpty(String s)
    {
@@ -105,10 +100,9 @@ public class StringUtil
    }
 
    /**
-    * Test if passed string <b>s</b> is an empty string or null
-    * (after being trimmed)
-    * @param s A string or null
-    * @return If null or empty, return true, else return false.
+    * 
+    * @param s
+    * @return
     */
    public static boolean isNullOrEmptyTrim(String s)
    {
@@ -146,6 +140,12 @@ public class StringUtil
         return strBuf.toString();
     }
     
+    /**
+     * 
+     * @param s
+     * @param sToken
+     * @return
+     */
     public static String[] split(String s, String sToken)
     {
         int iTokenLength=sToken.length();
@@ -182,14 +182,9 @@ public class StringUtil
     }
     
     /**
-     * Replaces characters that are not allowed in a Java style
-     * string literal with their escape characters.
-     * Quote ("), single quote ('), new line (\n), carriage return (\r),
-     * and backslash (\), and tab (\t) are replaced.
-     *
-     * @param s String to be escaped
-     * @return  String
-     * @throws NullPointerException if s is null.
+     * 
+     * @param s
+     * @return
      */
     public static String replaceJavaLiteral(String s){
         int length = s.length();
@@ -245,11 +240,10 @@ public class StringUtil
     }
     
     /**
-     * If the first string is not null or empty it trims it
-     * else it returns the second string
+     * 
      * @param value
      * @param other
-     * @return if not null or empty returns value else it returns other.
+     * @return
      */
     public static String OnEmptyUseOther(String value, String other)
     {
@@ -263,14 +257,11 @@ public class StringUtil
     }
     
     /**
-     * Used to add character padding before the string value.  Helps with form layouts.
      * 
      * @param stringValue
      * @param paddingChar
      * @param paddingLength
      * @return
-     * 
-     * @author Brendan Clemenzi
      */
     public static String stringPaddingBefore(String stringValue, String paddingChar, int paddingLength)
     {
@@ -287,14 +278,11 @@ public class StringUtil
     }
     
     /**
-     * Used to add character padding after the string value.  Helps with form layouts.
      * 
      * @param stringValue
      * @param paddingChar
      * @param paddingLength
      * @return
-     * 
-     * @author Brendan Clemenzi
      */
     public static String stringPaddingAfter(String stringValue, String paddingChar, int paddingLength)
     {
@@ -310,21 +298,10 @@ public class StringUtil
     }
     
     /**
-     * Parses a <B>tokenString</B> into a String array of sub-strings
-     * which are separated by characters in the <b>separators</b> string.
-     * There is no escape sequence in the input string.
-     * @param tokenString A string containing sub-strings separated by zero
-     * or more separator characters. Can't be null. <br>
-     * Example: "A/B,C.D"
-     * @param separators A string of characters which separate the
-     * sub-strings in the tokenString. Can be null or empty.<br>
-     * Example: "/\\|,"
-     * <i>NOTE:</i> Multiple consecutive separators are treated as a single
-     * separator which means that you will never have "empty" entries in
-     * the output array.
-     * <i>NOTE:</i> If there is only one separator character, this function is
-     * <b>much</b> faster.
-     * @return A string array of each of the non-empty sub-strings in the path.
+     * 
+     * @param tokenString
+     * @param separators
+     * @return
      */
     public static String[] parseString(String tokenString, String separators)
     {
@@ -517,6 +494,7 @@ public class StringUtil
     /**
      * 
      * @param dateField
+     * @param timeField
      * @return
      */
     public static Calendar convertToCalendar(String dateField, String timeField)
@@ -738,7 +716,6 @@ public class StringUtil
     }
     
     /**
-     * Check for a string, if an exception is thrown return default value.
      * 
      * @param s
      * @param defaultValue
@@ -761,7 +738,6 @@ public class StringUtil
     }
     
     /**
-     * Strip out HTML tags.  Leave plain/text content.  HREFs in links will be removed
      * 
      * @param html
      * @return
@@ -801,6 +777,12 @@ public class StringUtil
         return html;        
     }
     
+    /**
+     * 
+     * @param html
+     * @param tag
+     * @return
+     */
     public static String removeHTMLBlock(String html, String tag)
     {
         if (html.toLowerCase().contains("<" + tag) && html.toLowerCase().contains("</" + tag)) 
@@ -814,6 +796,12 @@ public class StringUtil
         return html;
     }
     
+    /**
+     * 
+     * @param fullString
+     * @param maxLength
+     * @return
+     */
     public static String truncate(String fullString, int maxLength)
     {
         String tempString = fullString.substring(0, Math.min(fullString.length(), maxLength));
@@ -822,7 +810,7 @@ public class StringUtil
     }
     
     /**
-     * Removes know entity encoding that is not XHTML ready 
+     * 
      * @param s
      * @return
      */
@@ -834,9 +822,9 @@ public class StringUtil
     }
     
     /**
-     * Remove any non alpha numeric characters from a string
-     * @param s   Any string
-     * @return    The string with any alpha numeric values removed,  if the string passed in was null, return an empty string
+     * 
+     * @param s
+     * @return
      */
     public static String removeSpecialChar(String s)
     {
@@ -844,10 +832,9 @@ public class StringUtil
     }
     
     /**
-     * Removes references to custom tags ex. <prefix:tagname>...</prefix:tagname> from the
-     * specified string.
+     * 
      * @param dirtyString
-     * @return A string cleaned of references to custom tags.
+     * @return
      */
     public static String removeCustomTags(String dirtyString)
     {

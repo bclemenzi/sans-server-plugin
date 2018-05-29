@@ -225,7 +225,6 @@ public abstract class AbstractDynamoDbDao
     /**
      * 
      * @param clazz
-     * @param totalSegments
      * @param columnName
      * @param value
      * @return

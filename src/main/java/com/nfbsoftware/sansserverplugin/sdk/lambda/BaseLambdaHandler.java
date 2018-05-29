@@ -153,7 +153,7 @@ public class BaseLambdaHandler implements ILambdaFunction
     /**
      * The getParameter method can be used as a simple way to get our function's input parameters.
      * 
-     * @param propertyKey
+     * @param parameterKey
      * @return
      */
     protected String getParameter(String parameterKey)
@@ -258,7 +258,7 @@ public class BaseLambdaHandler implements ILambdaFunction
     /**
      * The getRequestParameter method is a convenience method that will loop though our three possible 
      * 
-     * @param bodyKey
+     * @param key
      * @return
      */
     protected String getRequestParameter(String key)

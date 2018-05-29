@@ -17,6 +17,7 @@ Plugin/SDK Features
    * AmazonSESManager
    * AmazonGatewayManager
    * AmazonCognitoManager
+   * AmazonMemcacheManager
    * AbstractDynamoDbDao
   * JUnit test harness for locally testing your Lambda functions before deployment
   * Configuration schema to allow for the isolation of multiple deployments:  Multi-Engineer Development, QA, Production
@@ -39,7 +40,7 @@ To use the features provided by the SDK, include the following dependency to you
 		<dependency>
 			<groupId>com.nfbsoftware</groupId>
 			<artifactId>sans-server-plugin</artifactId>
-			<version>1.0.52</version>
+			<version>1.0.53</version>
 		</dependency>
 	</dependencies>
 ```
@@ -67,6 +68,7 @@ Available AWS utility classes in the SDK
  * AmazonCognitoManager
  * AmazonS3Manager
  * AmazonSESManager
+ * AmazonMemcacheManager
  * AbstractDynamoDbDao
  * BaseLambdaHandler
   
@@ -83,7 +85,7 @@ Including the Maven plugin in your project by adding the following configuration
 			<plugin>
                 <groupId>com.nfbsoftware</groupId>
 				<artifactId>sans-server-plugin</artifactId>
-				<version>1.0.52</version>
+				<version>1.0.53</version>
             	<executions>
                 	<execution>
                 		<id>first-execution</id>

@@ -47,7 +47,6 @@ public class AmazonCognitoManager
      * 
      * @param userId
      * @return
-     * @throws Exception
      */
     public GetOpenIdTokenForDeveloperIdentityResult getDeveloperIdentityResult(String userId)
     {

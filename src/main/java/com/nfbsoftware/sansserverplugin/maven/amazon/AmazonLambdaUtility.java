@@ -210,7 +210,7 @@ public class AmazonLambdaUtility
      * 
      * @param deploymentJarFileName
      * @param createFunctionRequest
-     * @return
+     * @throws Exception
      */
     public void createFunction(String deploymentJarFileName, CreateFunctionRequest createFunctionRequest) throws Exception
     {

@@ -167,7 +167,6 @@ public class AmazonGatewayManager
     /**
      * 
      * @param apiKey
-     * @return
      * @throws Exception
      */
     public void deleteApiKey(String apiKey) throws Exception

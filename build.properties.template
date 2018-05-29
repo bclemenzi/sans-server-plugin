@@ -45,6 +45,12 @@ aws.s3.deploymentFolder=deploy
 aws.ses.replyEmailAddress=noreply@example.com
 
 ##############################################################################################################
+## AWS Elasticache Memcached Properties
+##############################################################################################################
+aws.memcached.host=xxxxxxxxxx.cache.amazonaws.com
+aws.memcached.port=11211
+
+##############################################################################################################
 ## AWS API Gateway CORS filter
 ##############################################################################################################
 aws.apigateway.cors.Access-Control-Allow-Origin=*
